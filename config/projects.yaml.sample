@@ -1,0 +1,17 @@
+# プロジェクト設定サンプル
+# Project Configuration Sample
+#
+# 使用方法:
+# 1. このファイルをコピーして projects.yaml を作成
+# 2. 自分のプロジェクト情報を編集
+# 3. projects.yaml は .gitignore に含まれているため、ローカルでのみ使用される
+
+projects:
+  - id: sample_project
+    name: "Sample Project"
+    path: "/path/to/your/project"
+    priority: high
+    status: active
+
+# 現在アクティブなプロジェクトID
+current_project: sample_project

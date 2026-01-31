@@ -1,0 +1,40 @@
+{
+  "_comment": "MCP (Model Context Protocol) 設定サンプル / Sample MCP configuration",
+  "_usage": [
+    "1. このファイルをコピーして .mcp.json を作成 / Copy this file to .mcp.json",
+    "2. 自分の環境に合わせて設定を編集 / Edit settings for your environment",
+    "3. .mcp.json は .gitignore に含まれているため、ローカルのみ使用 / .mcp.json is in .gitignore, local use only"
+  ],
+  "mcpServers": {
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {
+        "MEMORY_FILE_PATH": "./memory/memory.json"
+      }
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-github-token-here"
+      }
+    },
+    "notion": {
+      "command": "npx",
+      "args": ["-y", "@suekou/mcp-notion-server"],
+      "env": {
+        "NOTION_API_TOKEN": "your-notion-token-here",
+        "NOTION_DATABASE_ID": "your-database-id-here"
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@executeautomation/playwright-mcp-server"]
+    }
+  }
+}

@@ -1,0 +1,79 @@
+# multi-agent-shogun システム設定
+# System Configuration
+#
+# 使用方法:
+# 1. このファイルをコピーして settings.yaml を作成
+# 2. 自分の環境に合わせて値を編集
+# 3. settings.yaml は .gitignore に含まれているため、ローカルでのみ使用される
+
+# 使用するAIエージェント (claude | codex)
+# AI Agent to use (claude | codex)
+agent: claude
+
+# 言語設定 (ja | en | es | zh | ko | fr | de)
+# Language setting
+language: ja
+
+# シェル設定 (bash | zsh)
+# Shell setting
+shell: bash
+
+# スクリーンショット保存パス
+# Screenshot save path
+screenshot:
+  path: ./screenshots
+
+# codex設定（agent: codex の場合に使用）
+# codex configuration (used when agent: codex)
+codex:
+  # ビルド済みバイナリのパス（空の場合はPATHから検索）
+  # Path to built binary (if empty, searches PATH)
+  binary_path: ""
+  
+  # codex-rsからビルドした場合のターゲットパス
+  # Target path when built from codex-rs
+  build_path: ./codex/codex-rs/target/debug/codex
+  
+  # デフォルトモデル
+  # Default model
+  model: gpt-5.2-codex
+  
+  # 利用可能なモデル一覧（コメントアウトして切り替え可能）
+  # Available models (uncomment to switch)
+  # 
+  # 【推奨モデル - Recommended Models】
+  # model: gpt-5.2-codex          # Latest frontier agentic coding model（最推奨）
+  # model: gpt-5.1-codex-max       # Codex-optimized flagship for deep and fast reasoning
+  # model: gpt-5.1-codex-mini      # Cheaper, faster, but less capable（コスト重視時）
+  # model: gpt-5.2                 # Latest frontier model with general reasoning
+  #
+  # 【その他のモデル - Other Models】
+  # model: gpt-5.1-codex           # Optimized for codex（非推奨: gpt-5.2-codexへ移行推奨）
+  # model: gpt-5.1                 # Broad world knowledge with strong general reasoning
+  # model: gpt-5-codex             # Optimized for codex（旧版）
+  # model: gpt-5-codex-mini        # Cheaper, faster, but less capable（旧版）
+  # model: gpt-5                   # Broad world knowledge with strong general reasoning（旧版）
+  
+  # 思考深度設定 (high | medium | low)
+  # Reasoning effort setting
+  shogun_reasoning: low      # 将軍用：戦略的判断は殿が行うため軽めに
+  worker_reasoning: medium   # 家老・足軽用：実務に適した深度
+  
+  # 追加オプション
+  # Additional options
+  options: ""
+
+# Claude設定（agent: claude の場合に使用）
+# Claude configuration (used when agent: claude)
+claude:
+  # 将軍用モデル
+  # Model for Shogun (general)
+  shogun_model: opus
+  
+  # 家老・足軽用モデル
+  # Model for Karo and Ashigaru
+  worker_model: sonnet
+  
+  # 追加オプション
+  # Additional options
+  options: "--dangerously-skip-permissions"
