@@ -25,6 +25,20 @@ if [ -f "./config/settings.yaml" ]; then
     SHELL_SETTING=$(grep "^shell:" ./config/settings.yaml 2>/dev/null | awk '{print $2}' || echo "bash")
 fi
 
+# エージェント設定を読み取り（デフォルト: claude）
+AGENT_SETTING="claude"
+if [ -f "./config/settings.yaml" ]; then
+    AGENT_SETTING=$(grep "^agent:" ./config/settings.yaml 2>/dev/null | awk '{print $2}' || echo "claude")
+fi
+
+# Codex思考深度設定を読み取り（デフォルト: shogun=low, worker=medium）
+CODEX_SHOGUN_REASONING="low"
+CODEX_WORKER_REASONING="medium"
+if [ -f "./config/settings.yaml" ]; then
+    CODEX_SHOGUN_REASONING=$(grep "shogun_reasoning:" ./config/settings.yaml 2>/dev/null | sed 's/.*: *//;s/ *#.*//' | tr -d '[:space:]' || echo "low")
+    CODEX_WORKER_REASONING=$(grep "worker_reasoning:" ./config/settings.yaml 2>/dev/null | sed 's/.*: *//;s/ *#.*//' | tr -d '[:space:]' || echo "medium")
+fi
+
 # 色付きログ関数（戦国風）
 log_info() {
     echo -e "\033[1;33m【報】\033[0m $1"
@@ -36,6 +50,60 @@ log_success() {
 
 log_war() {
     echo -e "\033[1;31m【戦】\033[0m $1"
+}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# エージェント起動コマンド生成関数
+# ───────────────────────────────────────────────────────────────────────────────
+# 使用法: get_agent_command "role"
+# role: shogun | karo | ashigaru
+# ═══════════════════════════════════════════════════════════════════════════════
+get_agent_command() {
+    local role="$1"
+    local cmd=""
+    
+    if [ "$AGENT_SETTING" = "codex" ]; then
+        # codexの場合
+        local codex_bin="codex"
+        
+        # ビルド済みバイナリのパス確認
+        if [ -f "./codex/codex-rs/target/debug/codex" ]; then
+            codex_bin="./codex/codex-rs/target/debug/codex"
+        elif [ -f "./codex/codex-rs/target/release/codex" ]; then
+            codex_bin="./codex/codex-rs/target/release/codex"
+        fi
+        
+        # codexコマンド構築
+        if [ "$role" = "shogun" ]; then
+            # 将軍用：思考深度を設定
+            cmd="${codex_bin} -c model_reasoning_effort=\"${CODEX_SHOGUN_REASONING}\""
+        else
+            # 家老・足軽用：思考深度を設定
+            cmd="${codex_bin} -c model_reasoning_effort=\"${CODEX_WORKER_REASONING}\""
+        fi
+    else
+        # Claudeの場合（デフォルト）
+        if [ "$role" = "shogun" ]; then
+            # 将軍用：opusモデル
+            cmd="MAX_THINKING_TOKENS=0 claude --model opus --dangerously-skip-permissions"
+        else
+            # 家老・足軽用
+            cmd="claude --dangerously-skip-permissions"
+        fi
+    fi
+    
+    echo "$cmd"
+}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# エージェント名表示関数
+# ───────────────────────────────────────────────────────────────────────────────
+get_agent_name() {
+    if [ "$AGENT_SETTING" = "codex" ]; then
+        echo "Codex"
+    else
+        echo "Claude Code"
+    fi
 }
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -479,21 +547,40 @@ log_success "  └─ 将軍の本陣、構築完了"
 echo ""
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# STEP 6: Claude Code 起動（--setup-only でスキップ）
+# STEP 6: AIエージェント起動（--setup-only でスキップ）
 # ═══════════════════════════════════════════════════════════════════════════════
 if [ "$SETUP_ONLY" = false ]; then
-    # Claude Code CLI の存在チェック
-    if ! command -v claude &> /dev/null; then
-        log_info "⚠️  claude コマンドが見つかりません"
-        echo "  first_setup.sh を再実行してください:"
-        echo "    ./first_setup.sh"
-        exit 1
+    AGENT_NAME=$(get_agent_name)
+    
+    # エージェント CLI の存在チェック
+    if [ "$AGENT_SETTING" = "codex" ]; then
+        # codexの場合：ビルド済みバイナリかPATHを確認
+        if [ ! -f "./codex/codex-rs/target/debug/codex" ] && [ ! -f "./codex/codex-rs/target/release/codex" ] && ! command -v codex &> /dev/null; then
+            log_info "⚠️  codex コマンドが見つかりません"
+            echo ""
+            echo "  codexをビルドしてください:"
+            echo "    cd codex/codex-rs && cargo build"
+            echo ""
+            echo "  または npm でインストール:"
+            echo "    npm install -g @openai/codex"
+            echo ""
+            exit 1
+        fi
+    else
+        # Claudeの場合
+        if ! command -v claude &> /dev/null; then
+            log_info "⚠️  claude コマンドが見つかりません"
+            echo "  first_setup.sh を再実行してください:"
+            echo "    ./first_setup.sh"
+            exit 1
+        fi
     fi
 
-    log_war "👑 全軍に Claude Code を召喚中..."
+    log_war "👑 全軍に ${AGENT_NAME} を召喚中..."
 
     # 将軍
-    tmux send-keys -t shogun "MAX_THINKING_TOKENS=0 claude --model opus --dangerously-skip-permissions"
+    SHOGUN_CMD=$(get_agent_command "shogun")
+    tmux send-keys -t shogun "${SHOGUN_CMD}"
     tmux send-keys -t shogun Enter
     log_info "  └─ 将軍、召喚完了"
 
@@ -501,19 +588,35 @@ if [ "$SETUP_ONLY" = false ]; then
     sleep 1
 
     # 家老 + 足軽（9ペイン）
+    WORKER_CMD=$(get_agent_command "karo")
     for i in {0..8}; do
-        tmux send-keys -t "multiagent:0.$i" "claude --dangerously-skip-permissions"
+        tmux send-keys -t "multiagent:0.$i" "${WORKER_CMD}"
         tmux send-keys -t "multiagent:0.$i" Enter
     done
     log_info "  └─ 家老・足軽、召喚完了"
 
-    log_success "✅ 全軍 Claude Code 起動完了"
+    log_success "✅ 全軍 ${AGENT_NAME} 起動完了"
     echo ""
 
     # ═══════════════════════════════════════════════════════════════════════════
     # STEP 6.5: 各エージェントに指示書を読み込ませる
     # ═══════════════════════════════════════════════════════════════════════════
     log_war "📜 各エージェントに指示書を読み込ませ中..."
+    
+    # エージェントに応じた指示書ファイルを選択
+    if [ "$AGENT_SETTING" = "codex" ]; then
+        SHOGUN_INSTRUCTION="instructions/codex-shogun.md"
+        KARO_INSTRUCTION="instructions/codex-karo.md"
+        ASHIGARU_INSTRUCTION="instructions/codex-ashigaru.md"
+        # codex用指示書が存在しない場合は既存の指示書を使用
+        [ -f "$SHOGUN_INSTRUCTION" ] || SHOGUN_INSTRUCTION="instructions/shogun.md"
+        [ -f "$KARO_INSTRUCTION" ] || KARO_INSTRUCTION="instructions/karo.md"
+        [ -f "$ASHIGARU_INSTRUCTION" ] || ASHIGARU_INSTRUCTION="instructions/ashigaru.md"
+    else
+        SHOGUN_INSTRUCTION="instructions/shogun.md"
+        KARO_INSTRUCTION="instructions/karo.md"
+        ASHIGARU_INSTRUCTION="instructions/ashigaru.md"
+    fi
     echo ""
 
     # ═══════════════════════════════════════════════════════════════════════════
@@ -594,14 +697,14 @@ NINJA_EOF
 
     # 将軍に指示書を読み込ませる
     log_info "  └─ 将軍に指示書を伝達中..."
-    tmux send-keys -t shogun "instructions/shogun.md を読んで役割を理解せよ。"
+    tmux send-keys -t shogun "${SHOGUN_INSTRUCTION} を読んで役割を理解せよ。"
     sleep 0.5
     tmux send-keys -t shogun Enter
 
     # 家老に指示書を読み込ませる
     sleep 2
     log_info "  └─ 家老に指示書を伝達中..."
-    tmux send-keys -t "multiagent:0.0" "instructions/karo.md を読んで役割を理解せよ。"
+    tmux send-keys -t "multiagent:0.0" "${KARO_INSTRUCTION} を読んで役割を理解せよ。"
     sleep 0.5
     tmux send-keys -t "multiagent:0.0" Enter
 
@@ -609,7 +712,7 @@ NINJA_EOF
     sleep 2
     log_info "  └─ 足軽に指示書を伝達中..."
     for i in {1..8}; do
-        tmux send-keys -t "multiagent:0.$i" "instructions/ashigaru.md を読んで役割を理解せよ。汝は足軽${i}号である。"
+        tmux send-keys -t "multiagent:0.$i" "${ASHIGARU_INSTRUCTION} を読んで役割を理解せよ。汝は足軽${i}号である。"
         sleep 0.3
         tmux send-keys -t "multiagent:0.$i" Enter
         sleep 0.5
@@ -658,17 +761,18 @@ echo "  ╚═══════════════════════
 echo ""
 
 if [ "$SETUP_ONLY" = true ]; then
-    echo "  ⚠️  セットアップのみモード: Claude Codeは未起動です"
+    AGENT_NAME=$(get_agent_name)
+    echo "  ⚠️  セットアップのみモード: ${AGENT_NAME}は未起動です"
     echo ""
-    echo "  手動でClaude Codeを起動するには:"
+    echo "  手動で${AGENT_NAME}を起動するには:"
     echo "  ┌──────────────────────────────────────────────────────────┐"
     echo "  │  # 将軍を召喚                                            │"
-    echo "  │  tmux send-keys -t shogun 'claude --dangerously-skip-permissions' Enter │"
+    echo "  │  tmux send-keys -t shogun '$(get_agent_command "shogun")' Enter │"
     echo "  │                                                          │"
     echo "  │  # 家老・足軽を一斉召喚                                   │"
     echo "  │  for i in {0..8}; do \\                                   │"
     echo "  │    tmux send-keys -t multiagent:0.\$i \\                   │"
-    echo "  │      'claude --dangerously-skip-permissions' Enter       │"
+    echo "  │      '$(get_agent_command "karo")' Enter                 │"
     echo "  │  done                                                    │"
     echo "  └──────────────────────────────────────────────────────────┘"
     echo ""

@@ -1,11 +1,15 @@
 # multi-agent-shogun システム構成
 
-> **Version**: 1.0.0
-> **Last Updated**: 2026-01-27
+> **Version**: 1.1.0
+> **Last Updated**: 2026-01-31
 
 ## 概要
-multi-agent-shogunは、Claude Code + tmux を使ったマルチエージェント並列開発基盤である。
+multi-agent-shogunは、Claude Code + tmux または Codex + tmux を使ったマルチエージェント並列開発基盤である。
 戦国時代の軍制をモチーフとした階層構造で、複数のプロジェクトを並行管理できる。
+
+**対応AIエージェント**:
+- Claude Code (Anthropic) - デフォルト
+- Codex (OpenAI) - config/settings.yamlで切替可能
 
 ## セッション開始時の必須行動（全エージェント必須）
 
@@ -126,6 +130,37 @@ projects/<id>.yaml          # 各プロジェクトの詳細（クライアン�
 ### multiagentセッション（9ペイン）
 - Pane 0: karo（家老）
 - Pane 1-8: ashigaru1-8（足軽）
+
+## AIエージェントの切替
+
+config/settings.yaml の `agent` で使用するAIエージェントを切り替える。
+
+```yaml
+agent: claude  # claude | codex
+```
+
+### Claude Codeを使用する場合
+```yaml
+agent: claude
+```
+- `claude` コマンドが必要
+- 指示書: instructions/shogun.md, karo.md, ashigaru.md
+
+### Codexを使用する場合
+```yaml
+agent: codex
+```
+- codexのビルド済みバイナリが必要（以下いずれか）
+  - `./codex/codex-rs/target/debug/codex`（開発ビルド）
+  - `./codex/codex-rs/target/release/codex`（リリースビルド）
+  - PATH上の `codex` コマンド（npmインストール時）
+- 指示書: instructions/codex-shogun.md, codex-karo.md, codex-ashigaru.md
+
+### codexのビルド方法
+```bash
+cd codex/codex-rs
+cargo build --release
+```
 
 ## 言語設定
 
