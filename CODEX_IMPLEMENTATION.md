@@ -84,8 +84,10 @@ multi-agent-shogunシステムをClaude Codeのみならず、OpenAI Codexも使
 - 家老・足軽: `claude --dangerously-skip-permissions`
 
 **Codex:**
-- 将軍: `MAX_THINKING_TOKENS=0 <codex-path>`
-- 家老・足軽: `<codex-path>`
+- 将軍: `MAX_THINKING_TOKENS=0 <codex-path> --dangerously-bypass-approvals-and-sandbox`
+- 家老・足軽: `<codex-path> --dangerously-bypass-approvals-and-sandbox`
+
+※ `config/settings.yaml` の `codex.options` で上書き可能
 
 ## 注意事項
 

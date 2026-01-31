@@ -61,6 +61,8 @@ codex:
   
   # 追加オプション
   # Additional options
+  # Claudeと同等の自動承認にする場合の例:
+  # options: "--dangerously-bypass-approvals-and-sandbox"
   options: ""
 
 # Claude設定（agent: claude の場合に使用）

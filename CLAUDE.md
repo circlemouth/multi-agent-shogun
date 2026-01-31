@@ -16,18 +16,17 @@ multi-agent-shogunは、Claude Code + tmux または Codex + tmux を使った�
 新たなセッションを開始した際（初回起動時）は、作業前に必ず以下を実行せよ。
 ※ これはコンパクション復帰とは異なる。セッション開始 = Claude Codeを新規に立ち上げた時の手順である。
 
-1. **Memory MCPを確認せよ**: まず `mcp__memory__read_graph` を実行し、Memory MCPに保存されたルール・コンテキスト・禁止事項を確認せよ。記憶の中に汝の行動を律する掟がある。これを読まずして動くは、刀を持たずに戦場に出るが如し。
-2. **自分の役割に対応する instructions を読め**:
-   - 将軍 → instructions/shogun.md
-   - 家老 → instructions/karo.md
-   - 足軽 → instructions/ashigaru.md
+1. **Memory MCPを確認（使える場合）**: Claudeでは `mcp__memory__read_graph` を実行し、Memory MCPに保存されたルール・コンテキスト・禁止事項を確認せよ。CodexでMemory MCPが使えない場合は、`memory/global_context.md`（存在すれば）を読み、必要に応じて `memory/shogun_memory.jsonl` を参照せよ。
+2. **自分の役割に対応する instructions を読め**（`config/settings.yaml` の `agent` に従う）:
+   - Claude: 将軍 → instructions/shogun.md / 家老 → instructions/karo.md / 足軽 → instructions/ashigaru.md
+   - Codex: 将軍 → instructions/codex-shogun.md / 家老 → instructions/codex-karo.md / 足軽 → instructions/codex-ashigaru.md
 3. **instructions に従い、必要なコンテキストファイルを読み込んでから作業を開始せよ**
 
 Memory MCPには、コンパクションを超えて永続化すべきルール・判断基準・殿の好みが保存されている。
-セッション開始時にこれを読むことで、過去の学びを引き継いだ状態で作業に臨める。
+CodexでMemory MCPが使えない場合は、`memory/global_context.md` と `memory/shogun_memory.jsonl` を参照し、同等の文脈を復元せよ。
 
 > **セッション開始とコンパクション復帰の違い**:
-> - **セッション開始**: Claude Codeの新規起動。白紙の状態からMemory MCPでコンテキストを復元する
+> - **セッション開始**: Claude Code / Codex の新規起動。白紙の状態からMemory MCPまたはメモリファイルでコンテキストを復元する
 > - **コンパクション復帰**: 同一セッション内でコンテキストが圧縮された後の復帰。summaryが残っているが、正データから再確認が必要
 
 ## コンパクション復帰時（全エージェント必須）
@@ -38,10 +37,9 @@ Memory MCPには、コンパクションを超えて永続化すべきルール�
    - `shogun:0.0` → 将軍
    - `multiagent:0.0` → 家老
    - `multiagent:0.1` ～ `multiagent:0.8` → 足軽1～8
-2. **対応する instructions を読む**:
-   - 将軍 → instructions/shogun.md
-   - 家老 → instructions/karo.md
-   - 足軽 → instructions/ashigaru.md
+2. **対応する instructions を読む**（`config/settings.yaml` の `agent` に従う）:
+   - Claude: 将軍 → instructions/shogun.md / 家老 → instructions/karo.md / 足軽 → instructions/ashigaru.md
+   - Codex: 将軍 → instructions/codex-shogun.md / 家老 → instructions/codex-karo.md / 足軽 → instructions/codex-ashigaru.md
 3. **instructions 内の「コンパクション復帰手順」に従い、正データから状況を再把握する**
 4. **禁止事項を確認してから作業開始**
 
@@ -203,22 +201,23 @@ language: ja  # ja, en, es, zh, ko, fr, de 等
 
 ## MCPツールの使用
 
-MCPツールは遅延ロード方式。使用前に必ず `ToolSearch` で検索せよ。
+- Claude Code: MCPツールは遅延ロード方式。使用前に `ToolSearch` で検索せよ。
+- Codex: `ToolSearch` がない場合は、利用可能なツール一覧にあるものだけ使う。ツールが見当たらなければスキップせよ。
 
 ```
-例: Notionを使う場合
+例: Notionを使う場合（Claude）
 1. ToolSearch で "notion" を検索
 2. 返ってきたツール（mcp__notion__xxx）を使用
 ```
 
-**導入済みMCP**: Notion, Playwright, GitHub, Sequential Thinking, Memory
+**導入済みMCP**: Notion, Playwright, GitHub, Sequential Thinking, Memory（Codexでは未接続の可能性あり）
 
 ## 将軍の必須行動（コンパクション後も忘れるな！）
 
 以下は**絶対に守るべきルール**である。コンテキストがコンパクションされても必ず実行せよ。
 
-> **ルール永続化**: 重要なルールは Memory MCP にも保存されている。
-> コンパクション後に不安な場合は `mcp__memory__read_graph` で確認せよ。
+> **ルール永続化**: 重要なルールは Memory MCP または `memory/` 配下ファイルに保存されている。
+> Codexで Memory MCP が使えない場合は `memory/global_context.md` を確認せよ。
 
 ### 1. ダッシュボード更新
 - **dashboard.md の更新は家老の責任**

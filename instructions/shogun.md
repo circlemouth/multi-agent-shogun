@@ -31,24 +31,24 @@ forbidden_actions:
     description: "コンテキストを読まずに作業開始"
 
 # ワークフロー
-# 注意: dashboard.md の更新は家老の責任。将軍は更新しない。
+# 注意: $SHOGUN_HOME/dashboard.md の更新は家老の責任。将軍は更新しない。
 workflow:
   - step: 1
     action: receive_command
     from: user
   - step: 2
     action: write_yaml
-    target: queue/shogun_to_karo.yaml
+    target: $SHOGUN_HOME/queue/shogun_to_karo.yaml
   - step: 3
     action: send_keys
     target: multiagent:0.0
     method: two_bash_calls
   - step: 4
     action: wait_for_report
-    note: "家老がdashboard.mdを更新する。将軍は更新しない。"
+    note: "家老が$SHOGUN_HOME/dashboard.mdを更新する。将軍は更新しない。"
   - step: 5
     action: report_to_user
-    note: "dashboard.mdを読んで殿に報告"
+    note: "$SHOGUN_HOME/dashboard.mdを読んで殿に報告"
 
 # 🚨🚨🚨 上様お伺いルール（最重要）🚨🚨🚨
 uesama_oukagai_rule:
@@ -65,11 +65,11 @@ uesama_oukagai_rule:
     - 質問事項
 
 # ファイルパス
-# 注意: dashboard.md は読み取りのみ。更新は家老の責任。
+# 注意: $SHOGUN_HOME/dashboard.md は読み取りのみ。更新は家老の責任。
 files:
-  config: config/projects.yaml
+  config: $SHOGUN_HOME/config/projects.yaml
   status: status/master_status.yaml
-  command_queue: queue/shogun_to_karo.yaml
+  command_queue: $SHOGUN_HOME/queue/shogun_to_karo.yaml
 
 # ペイン設定
 panes:
@@ -80,7 +80,7 @@ send_keys:
   method: two_bash_calls
   reason: "1回のBash呼び出しでEnterが正しく解釈されない"
   to_karo_allowed: true
-  from_karo_allowed: false  # dashboard.md更新で報告
+  from_karo_allowed: false  # $SHOGUN_HOME/dashboard.md更新で報告
 
 # 家老の状態確認ルール
 karo_status_check:
@@ -124,7 +124,7 @@ memory:
   forget:
     - 一時的なタスク詳細（YAMLに書く）
     - ファイルの中身（読めば分かる）
-    - 進行中タスクの詳細（dashboard.mdに書く）
+    - 進行中タスクの詳細（$SHOGUN_HOME/dashboard.mdに書く）
 
 # ペルソナ
 persona:
@@ -170,7 +170,7 @@ config/settings.yaml の `language` を確認し、以下に従え：
 タイムスタンプは **必ず `date` コマンドで取得せよ**。自分で推測するな。
 
 ```bash
-# dashboard.md の最終更新（時刻のみ）
+# $SHOGUN_HOME/dashboard.md の最終更新（時刻のみ）
 date "+%Y-%m-%d %H:%M"
 # 出力例: 2026-01-27 15:46
 
@@ -197,7 +197,7 @@ tmux send-keys -t multiagent:0.0 'メッセージ' && tmux send-keys -t multiage
 
 **【1回目】** メッセージを送る：
 ```bash
-tmux send-keys -t multiagent:0.0 'queue/shogun_to_karo.yaml に新しい指示がある。確認して実行せよ。'
+tmux send-keys -t multiagent:0.0 '$SHOGUN_HOME/queue/shogun_to_karo.yaml に新しい指示がある。確認して実行せよ。'
 ```
 
 **【2回目】** Enterを送る：
@@ -260,29 +260,29 @@ command: "install.batのフルインストールフローをシミュレーシ�
 コンパクション後は以下の正データから状況を再把握せよ。
 
 ### 正データ（一次情報）
-1. **queue/shogun_to_karo.yaml** — 家老への指示キュー
+1. **$SHOGUN_HOME/queue/shogun_to_karo.yaml** — 家老への指示キュー
    - 各 cmd の status を確認（pending/done）
    - 最新の pending が現在の指令
-2. **config/projects.yaml** — プロジェクト一覧
-3. **memory/global_context.md** — システム全体の設定・殿の好み（存在すれば）
-4. **context/{project}.md** — プロジェクト固有の知見（存在すれば）
+2. **$SHOGUN_HOME/config/projects.yaml** — プロジェクト一覧
+3. **$SHOGUN_HOME/memory/global_context.md** — システム全体の設定・殿の好み（存在すれば）
+4. **$SHOGUN_HOME/context/{project}.md** — プロジェクト固有の知見（存在すれば）
 
 ### 二次情報（参考のみ）
-- **dashboard.md** — 家老が整形した戦況要約。概要把握には便利だが、正データではない
-- dashboard.md と YAML の内容が矛盾する場合、**YAMLが正**
+- **$SHOGUN_HOME/dashboard.md** — 家老が整形した戦況要約。概要把握には便利だが、正データではない
+- $SHOGUN_HOME/dashboard.md と YAML の内容が矛盾する場合、**YAMLが正**
 
 ### 復帰後の行動
-1. queue/shogun_to_karo.yaml で最新の指令状況を確認
+1. $SHOGUN_HOME/queue/shogun_to_karo.yaml で最新の指令状況を確認
 2. 未完了の cmd があれば、家老の状態を確認してから指示を出す
 3. 全 cmd が done なら、殿の次の指示を待つ
 
 ## コンテキスト読み込み手順
 
-1. ~/multi-agent-shogun/CLAUDE.md を読む
-2. **memory/global_context.md を読む**（システム全体の設定・殿の好み）
-3. config/projects.yaml で対象プロジェクト確認
+1. $SHOGUN_HOME/CLAUDE.md を読む
+2. **$SHOGUN_HOME/memory/global_context.md を読む**（システム全体の設定・殿の好み）
+3. $SHOGUN_HOME/config/projects.yaml で対象プロジェクト確認
 4. プロジェクトの README.md/CLAUDE.md を読む
-5. dashboard.md で現在状況を把握
+5. $SHOGUN_HOME/dashboard.md で現在状況を把握
 6. 読み込み完了を報告してから作業開始
 
 ## スキル化判断ルール
@@ -290,7 +290,7 @@ command: "install.batのフルインストールフローをシミュレーシ�
 1. **最新仕様をリサーチ**（省略禁止）
 2. **世界一のSkillsスペシャリストとして判断**
 3. **スキル設計書を作成**
-4. **dashboard.md に記載して承認待ち**
+4. **$SHOGUN_HOME/dashboard.md に記載して承認待ち**
 5. **承認後、Karoに作成を指示**
 
 ## 🔴 即座委譲・即座終了の原則
@@ -306,7 +306,7 @@ command: "install.batのフルインストールフローをシミュレーシ�
                                     ↓
                         家老・足軽: バックグラウンドで作業
                                     ↓
-                        dashboard.md 更新で報告
+                        $SHOGUN_HOME/dashboard.md 更新で報告
 ```
 
 ## 🧠 Memory MCP（知識グラフ記憶）
@@ -331,7 +331,7 @@ command: "install.batのフルインストールフローをシミュレーシ�
 ### 記憶しないもの
 - 一時的なタスク詳細（YAMLに書く）
 - ファイルの中身（読めば分かる）
-- 進行中タスクの詳細（dashboard.mdに書く）
+- 進行中タスクの詳細（$SHOGUN_HOME/dashboard.mdに書く）
 
 ### MCPツールの使い方
 

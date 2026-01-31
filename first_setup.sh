@@ -44,6 +44,68 @@ log_step() {
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
+# 設定ファイルを読み取り
+SETTINGS_FILE="$SCRIPT_DIR/config/settings.yaml"
+AGENT_SETTING="claude"
+CODEX_BINARY_PATH=""
+CODEX_BUILD_PATH=""
+
+strip_quotes() {
+    echo "$1" | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//"
+}
+
+resolve_config_path() {
+    local raw="$1"
+    raw=$(strip_quotes "$raw")
+    if [ -z "$raw" ]; then
+        echo ""
+        return
+    fi
+    if [[ "$raw" = /* ]]; then
+        echo "$raw"
+    else
+        echo "$SCRIPT_DIR/${raw#./}"
+    fi
+}
+
+if [ -f "$SETTINGS_FILE" ]; then
+    AGENT_SETTING=$(grep "^agent:" "$SETTINGS_FILE" 2>/dev/null | awk '{print $2}' || echo "claude")
+    CODEX_BINARY_PATH=$(awk -F': ' '/^  binary_path:/{print $2; exit}' "$SETTINGS_FILE")
+    CODEX_BUILD_PATH=$(awk -F': ' '/^  build_path:/{print $2; exit}' "$SETTINGS_FILE")
+fi
+if [ -z "$AGENT_SETTING" ]; then
+    AGENT_SETTING="claude"
+fi
+
+resolve_codex_cmd() {
+    local cfg_binary
+    local cfg_build
+    cfg_binary=$(resolve_config_path "$CODEX_BINARY_PATH")
+    cfg_build=$(resolve_config_path "$CODEX_BUILD_PATH")
+
+    if [ -n "$cfg_binary" ] && [ -x "$cfg_binary" ]; then
+        echo "$cfg_binary"
+        return
+    fi
+    if [ -n "$cfg_build" ] && [ -x "$cfg_build" ]; then
+        echo "$cfg_build"
+        return
+    fi
+    if [ -x "$SCRIPT_DIR/codex/codex-rs/target/debug/codex" ]; then
+        echo "$SCRIPT_DIR/codex/codex-rs/target/debug/codex"
+        return
+    fi
+    if [ -x "$SCRIPT_DIR/codex/codex-rs/target/release/codex" ]; then
+        echo "$SCRIPT_DIR/codex/codex-rs/target/release/codex"
+        return
+    fi
+    if command -v codex &> /dev/null; then
+        echo "codex"
+        return
+    fi
+    echo ""
+}
+
 # 結果追跡用変数
 RESULTS=()
 HAS_ERROR=false
@@ -578,26 +640,51 @@ RESULTS+=("alias設定: OK")
 # ============================================================
 log_step "STEP 11: Memory MCP セットアップ"
 
-if command -v claude &> /dev/null; then
-    # Memory MCP が既に設定済みか確認
-    if claude mcp list 2>/dev/null | grep -q "memory"; then
-        log_info "Memory MCP は既に設定済みです"
-        RESULTS+=("Memory MCP: OK (設定済み)")
-    else
-        log_info "Memory MCP を設定中..."
-        if claude mcp add memory \
-            -e MEMORY_FILE_PATH="$SCRIPT_DIR/memory/shogun_memory.jsonl" \
-            -- npx -y @modelcontextprotocol/server-memory 2>/dev/null; then
-            log_success "Memory MCP 設定完了"
-            RESULTS+=("Memory MCP: 設定完了")
+MEMORY_FILE_PATH="$SCRIPT_DIR/memory/shogun_memory.jsonl"
+
+if [ "$AGENT_SETTING" = "codex" ]; then
+    CODEX_CMD=$(resolve_codex_cmd)
+    if [ -n "$CODEX_CMD" ]; then
+        if "$CODEX_CMD" mcp list 2>/dev/null | grep -q "memory"; then
+            log_info "Memory MCP は既に設定済みです (codex)"
+            RESULTS+=("Memory MCP: OK (codex 設定済み)")
         else
-            log_warn "Memory MCP の設定に失敗しました（手動で設定可能）"
-            RESULTS+=("Memory MCP: 設定失敗 (手動設定可能)")
+            log_info "Memory MCP を設定中 (codex)..."
+            if "$CODEX_CMD" mcp add memory \
+                --env MEMORY_FILE_PATH="$MEMORY_FILE_PATH" \
+                -- npx -y @modelcontextprotocol/server-memory 2>/dev/null; then
+                log_success "Memory MCP 設定完了 (codex)"
+                RESULTS+=("Memory MCP: 設定完了 (codex)")
+            else
+                log_warn "Memory MCP の設定に失敗しました (codex)"
+                RESULTS+=("Memory MCP: 設定失敗 (codex)")
+            fi
         fi
+    else
+        log_warn "codex コマンドが見つからないため Memory MCP 設定をスキップ"
+        RESULTS+=("Memory MCP: スキップ (codex未インストール)")
     fi
 else
-    log_warn "claude コマンドが見つからないため Memory MCP 設定をスキップ"
-    RESULTS+=("Memory MCP: スキップ (claude未インストール)")
+    if command -v claude &> /dev/null; then
+        if claude mcp list 2>/dev/null | grep -q "memory"; then
+            log_info "Memory MCP は既に設定済みです"
+            RESULTS+=("Memory MCP: OK (設定済み)")
+        else
+            log_info "Memory MCP を設定中..."
+            if claude mcp add memory \
+                -e MEMORY_FILE_PATH="$MEMORY_FILE_PATH" \
+                -- npx -y @modelcontextprotocol/server-memory 2>/dev/null; then
+                log_success "Memory MCP 設定完了"
+                RESULTS+=("Memory MCP: 設定完了")
+            else
+                log_warn "Memory MCP の設定に失敗しました（手動で設定可能）"
+                RESULTS+=("Memory MCP: 設定失敗 (手動設定可能)")
+            fi
+        fi
+    else
+        log_warn "claude コマンドが見つからないため Memory MCP 設定をスキップ"
+        RESULTS+=("Memory MCP: スキップ (claude未インストール)")
+    fi
 fi
 
 # ============================================================

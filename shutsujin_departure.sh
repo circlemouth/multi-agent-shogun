@@ -39,6 +39,71 @@ if [ -f "./config/settings.yaml" ]; then
     CODEX_WORKER_REASONING=$(grep "worker_reasoning:" ./config/settings.yaml 2>/dev/null | sed 's/.*: *//;s/ *#.*//' | tr -d '[:space:]' || echo "medium")
 fi
 
+# Codex/Claude オプション設定を読み取り（空の場合はデフォルトを後で適用）
+CODEX_OPTIONS=""
+CLAUDE_OPTIONS=""
+if [ -f "./config/settings.yaml" ]; then
+    CODEX_OPTIONS=$(awk '
+        /^codex:/ {in_section=1; next}
+        /^claude:/ {in_section=0}
+        in_section && /^[[:space:]]*options:/ {
+            sub(/^[[:space:]]*options:[[:space:]]*/, "");
+            sub(/[[:space:]]+#.*/, "");
+            gsub(/^"|"$/, "");
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "");
+            print;
+            exit
+        }
+    ' ./config/settings.yaml)
+
+    CLAUDE_OPTIONS=$(awk '
+        /^claude:/ {in_section=1; next}
+        in_section && /^[[:space:]]*options:/ {
+            sub(/^[[:space:]]*options:[[:space:]]*/, "");
+            sub(/[[:space:]]+#.*/, "");
+            gsub(/^"|"$/, "");
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "");
+            print;
+            exit
+        }
+    ' ./config/settings.yaml)
+fi
+
+# ============================================================
+# プロジェクトパス取得（config/projects.yaml の current_project）
+# ============================================================
+get_current_project_path() {
+    local cfg="./config/projects.yaml"
+    [ -f "$cfg" ] || return
+
+    local current_id=""
+    current_id=$(awk -F': ' '/^current_project:/ {print $2; exit}' "$cfg")
+    current_id="${current_id//\"/}"
+    if [ -z "$current_id" ]; then
+        return
+    fi
+
+    awk -v id="$current_id" '
+        $1 == "-" && $2 == "id:" {cur=$3; gsub(/"/, "", cur)}
+        $1 == "path:" && cur == id {
+            val=$2
+            sub(/^"/, "", val)
+            sub(/"$/, "", val)
+            print val
+            exit
+        }
+    ' "$cfg"
+}
+
+PROJECT_PATH="$(get_current_project_path)"
+if [ -z "$PROJECT_PATH" ]; then
+    PROJECT_PATH="$SCRIPT_DIR"
+fi
+if [ ! -d "$PROJECT_PATH" ]; then
+    echo -e "\033[1;33m【報】\033[0m ⚠️  current_project の path が見つからないため、${SCRIPT_DIR} を使用します"
+    PROJECT_PATH="$SCRIPT_DIR"
+fi
+
 # 色付きログ関数（戦国風）
 log_info() {
     echo -e "\033[1;33m【報】\033[0m $1"
@@ -81,14 +146,28 @@ get_agent_command() {
             # 家老・足軽用：思考深度を設定
             cmd="${codex_bin} -c model_reasoning_effort=\"${CODEX_WORKER_REASONING}\""
         fi
+
+        # CodexはClaudeと同様の自動承認で起動（未設定時のデフォルト）
+        local options="${CODEX_OPTIONS}"
+        if [ -z "$options" ]; then
+            options="--dangerously-bypass-approvals-and-sandbox"
+        fi
+        if [ -n "$options" ]; then
+            cmd="${cmd} ${options}"
+        fi
     else
         # Claudeの場合（デフォルト）
+        local options="${CLAUDE_OPTIONS}"
+        if [ -z "$options" ]; then
+            options="--dangerously-skip-permissions"
+        fi
+
         if [ "$role" = "shogun" ]; then
             # 将軍用：opusモデル
-            cmd="MAX_THINKING_TOKENS=0 claude --model opus --dangerously-skip-permissions"
+            cmd="MAX_THINKING_TOKENS=0 claude --model opus ${options}"
         else
             # 家老・足軽用
-            cmd="claude --dangerously-skip-permissions"
+            cmd="claude ${options}"
         fi
     fi
     
@@ -514,7 +593,11 @@ PANE_COLORS=("red" "blue" "blue" "blue" "blue" "blue" "blue" "blue" "blue")
 for i in {0..8}; do
     tmux select-pane -t "multiagent:0.$i" -T "${PANE_TITLES[$i]}"
     PROMPT_STR=$(generate_prompt "${PANE_TITLES[$i]}" "${PANE_COLORS[$i]}" "$SHELL_SETTING")
-    tmux send-keys -t "multiagent:0.$i" "cd \"$(pwd)\" && export PS1='${PROMPT_STR}' && clear" Enter
+    worker_id="karo"
+    if [ "$i" -ne 0 ]; then
+        worker_id="ashigaru${i}"
+    fi
+    tmux send-keys -t "multiagent:0.$i" "export SHOGUN_HOME=\"${SCRIPT_DIR}\" SHOGUN_PROJECT_ROOT=\"${PROJECT_PATH}\" SHOGUN_WORKER_ID=\"${worker_id}\"; cd \"${PROJECT_PATH}\" && export PS1='${PROMPT_STR}' && clear" Enter
 done
 
 log_success "  └─ 家老・足軽の陣、構築完了"
@@ -540,7 +623,7 @@ if ! tmux new-session -d -s shogun 2>/dev/null; then
     exit 1
 fi
 SHOGUN_PROMPT=$(generate_prompt "将軍" "magenta" "$SHELL_SETTING")
-tmux send-keys -t shogun "cd \"$(pwd)\" && export PS1='${SHOGUN_PROMPT}' && clear" Enter
+tmux send-keys -t shogun "export SHOGUN_HOME=\"${SCRIPT_DIR}\" SHOGUN_PROJECT_ROOT=\"${PROJECT_PATH}\" SHOGUN_WORKER_ID=\"shogun\"; cd \"${PROJECT_PATH}\" && export PS1='${SHOGUN_PROMPT}' && clear" Enter
 tmux select-pane -t shogun:0.0 -P 'bg=#002b36'  # 将軍の Solarized Dark
 
 log_success "  └─ 将軍の本陣、構築完了"
@@ -617,6 +700,10 @@ if [ "$SETUP_ONLY" = false ]; then
         KARO_INSTRUCTION="instructions/karo.md"
         ASHIGARU_INSTRUCTION="instructions/ashigaru.md"
     fi
+
+    SHOGUN_INSTRUCTION_PATH="${SCRIPT_DIR}/${SHOGUN_INSTRUCTION}"
+    KARO_INSTRUCTION_PATH="${SCRIPT_DIR}/${KARO_INSTRUCTION}"
+    ASHIGARU_INSTRUCTION_PATH="${SCRIPT_DIR}/${ASHIGARU_INSTRUCTION}"
     echo ""
 
     # ═══════════════════════════════════════════════════════════════════════════
@@ -706,14 +793,14 @@ NINJA_EOF
 
     # 将軍に指示書を読み込ませる
     log_info "  └─ 将軍に指示書を伝達中..."
-    tmux send-keys -t shogun "${SHOGUN_INSTRUCTION} を読んで役割を理解せよ。"
+    tmux send-keys -t shogun "${SHOGUN_INSTRUCTION_PATH} を読んで役割を理解せよ。"
     sleep 0.5
     tmux send-keys -t shogun Enter
 
     # 家老に指示書を読み込ませる
     sleep 2
     log_info "  └─ 家老に指示書を伝達中..."
-    tmux send-keys -t "multiagent:0.0" "${KARO_INSTRUCTION} を読んで役割を理解せよ。"
+    tmux send-keys -t "multiagent:0.0" "${KARO_INSTRUCTION_PATH} を読んで役割を理解せよ。"
     sleep 0.5
     tmux send-keys -t "multiagent:0.0" Enter
 
@@ -721,7 +808,7 @@ NINJA_EOF
     sleep 2
     log_info "  └─ 足軽に指示書を伝達中..."
     for i in {1..8}; do
-        tmux send-keys -t "multiagent:0.$i" "${ASHIGARU_INSTRUCTION} を読んで役割を理解せよ。汝は足軽${i}号である。"
+        tmux send-keys -t "multiagent:0.$i" "${ASHIGARU_INSTRUCTION_PATH} を読んで役割を理解せよ。汝は足軽${i}号である。"
         sleep 0.3
         tmux send-keys -t "multiagent:0.$i" Enter
         sleep 0.5

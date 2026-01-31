@@ -464,43 +464,49 @@ Skills are **user-driven** — they only grow when you decide they're useful. Au
 
 ## 🔌 MCP Setup Guide
 
-MCP (Model Context Protocol) servers extend Claude's capabilities. Here's how to set them up:
+MCP (Model Context Protocol) servers extend Claude/Codex capabilities. Here's how to set them up:
 
 ### What is MCP?
 
-MCP servers give Claude access to external tools:
+MCP servers give the agent access to external tools:
 - **Notion MCP** → Read/write Notion pages
 - **GitHub MCP** → Create PRs, manage issues
 - **Memory MCP** → Remember things across sessions
 
 ### Installing MCP Servers
 
-Run these commands to add MCP servers:
+Run these commands to add MCP servers (use `claude` or `codex` based on `config/settings.yaml` → `agent`):
 
 ```bash
 # 1. Notion - Connect to your Notion workspace
 claude mcp add notion -e NOTION_TOKEN=your_token_here -- npx -y @notionhq/notion-mcp-server
+# codex: codex mcp add notion --env NOTION_TOKEN=your_token_here -- npx -y @notionhq/notion-mcp-server
 
 # 2. Playwright - Browser automation
 claude mcp add playwright -- npx @playwright/mcp@latest
+# codex: codex mcp add playwright -- npx @playwright/mcp@latest
 # Note: Run `npx playwright install chromium` first
 
 # 3. GitHub - Repository operations
 claude mcp add github -e GITHUB_PERSONAL_ACCESS_TOKEN=your_pat_here -- npx -y @modelcontextprotocol/server-github
+# codex: codex mcp add github --env GITHUB_PERSONAL_ACCESS_TOKEN=your_pat_here -- npx -y @modelcontextprotocol/server-github
 
 # 4. Sequential Thinking - Step-by-step reasoning for complex problems
 claude mcp add sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking
+# codex: codex mcp add sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking
 
 # 5. Memory - Long-term memory across sessions (Recommended!)
-# ✅ Automatically configured by first_setup.sh
+# ✅ Automatically configured by first_setup.sh (reads config/settings.yaml)
 # To reconfigure manually:
 claude mcp add memory -e MEMORY_FILE_PATH="$PWD/memory/shogun_memory.jsonl" -- npx -y @modelcontextprotocol/server-memory
+# codex: codex mcp add memory --env MEMORY_FILE_PATH="$PWD/memory/shogun_memory.jsonl" -- npx -y @modelcontextprotocol/server-memory
 ```
 
 ### Verify Installation
 
 ```bash
 claude mcp list
+# codex: codex mcp list
 ```
 
 You should see all servers with "Connected" status.
@@ -766,10 +772,11 @@ mcp__memory__read_graph()  ← Works!
 <details>
 <summary><b>Agents asking for permissions?</b></summary>
 
-Make sure to start with `--dangerously-skip-permissions`:
+Make sure to start with the correct flag for your agent:
 
 ```bash
 claude --dangerously-skip-permissions --system-prompt "..."
+codex --dangerously-bypass-approvals-and-sandbox
 ```
 
 </details>
@@ -797,6 +804,18 @@ tmux attach-session -t multiagent
 | `Ctrl+B` then `d` | Detach (leave running) |
 | `tmux kill-session -t shogun` | Stop Shogun session |
 | `tmux kill-session -t multiagent` | Stop worker sessions |
+
+---
+
+## 📂 Working Directory
+
+On startup, all panes `cd` into the active project path defined by `current_project` in `config/projects.yaml`.
+If the path is missing or invalid, the system falls back to the `multi-agent-shogun` repository root.
+
+### Environment variables
+
+- `SHOGUN_HOME`: absolute path to this repository (system root)
+- `SHOGUN_PROJECT_ROOT`: absolute path to the active project (`current_project`)
 
 ### 🖱️ Mouse Support
 

@@ -17,7 +17,7 @@ forbidden_actions:
   - id: F002
     action: direct_user_report
     description: "Shogunを通さず人間に直接報告"
-    use_instead: dashboard.md
+    use_instead: $SHOGUN_HOME/dashboard.md
   - id: F003
     action: use_task_agents
     description: "Task agentsを使用"
@@ -39,10 +39,10 @@ workflow:
     via: send-keys
   - step: 2
     action: read_yaml
-    target: queue/shogun_to_karo.yaml
+    target: $SHOGUN_HOME/queue/shogun_to_karo.yaml
   - step: 3
     action: update_dashboard
-    target: dashboard.md
+    target: $SHOGUN_HOME/dashboard.md
     section: "進行中"
     note: "タスク受領時に「進行中」セクションを更新"
   - step: 4
@@ -52,7 +52,7 @@ workflow:
     action: decompose_tasks
   - step: 6
     action: write_yaml
-    target: "queue/tasks/ashigaru{N}.yaml"
+    target: "$SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml"
     note: "各足軽専用ファイル"
   - step: 7
     action: send_keys
@@ -68,21 +68,21 @@ workflow:
     via: send-keys
   - step: 10
     action: scan_all_reports
-    target: "queue/reports/ashigaru*_report.yaml"
+    target: "$SHOGUN_HOME/queue/reports/ashigaru*_report.yaml"
     note: "起こした足軽だけでなく全報告を必ずスキャン。通信ロスト対策"
   - step: 11
     action: update_dashboard
-    target: dashboard.md
+    target: $SHOGUN_HOME/dashboard.md
     section: "戦果"
     note: "完了報告受信時に「戦果」セクションを更新。将軍へのsend-keysは行わない"
 
 # ファイルパス
 files:
-  input: queue/shogun_to_karo.yaml
-  task_template: "queue/tasks/ashigaru{N}.yaml"
-  report_pattern: "queue/reports/ashigaru{N}_report.yaml"
+  input: $SHOGUN_HOME/queue/shogun_to_karo.yaml
+  task_template: "$SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml"
+  report_pattern: "$SHOGUN_HOME/queue/reports/ashigaru{N}_report.yaml"
   status: status/master_status.yaml
-  dashboard: dashboard.md
+  dashboard: $SHOGUN_HOME/dashboard.md
 
 # ペイン設定
 panes:
@@ -102,7 +102,7 @@ panes:
 send_keys:
   method: two_bash_calls
   to_ashigaru_allowed: true
-  to_shogun_allowed: false  # dashboard.md更新で報告
+  to_shogun_allowed: false  # $SHOGUN_HOME/dashboard.md更新で報告
   reason_shogun_disabled: "殿の入力中に割り込み防止"
 
 # 足軽の状態確認ルール
@@ -157,7 +157,7 @@ persona:
 | ID | 禁止行為 | 理由 | 代替手段 |
 |----|----------|------|----------|
 | F001 | 自分でタスク実行 | 家老の役割は管理 | Ashigaruに委譲 |
-| F002 | 人間に直接報告 | 指揮系統の乱れ | dashboard.md更新 |
+| F002 | 人間に直接報告 | 指揮系統の乱れ | $SHOGUN_HOME/dashboard.md更新 |
 | F003 | Task agents使用 | 統制不能 | send-keys |
 | F004 | ポーリング | API代金浪費 | イベント駆動 |
 | F005 | コンテキスト未読 | 誤分解の原因 | 必ず先読み |
@@ -174,7 +174,7 @@ config/settings.yaml の `language` を確認：
 タイムスタンプは **必ず `date` コマンドで取得せよ**。自分で推測するな。
 
 ```bash
-# dashboard.md の最終更新（時刻のみ）
+# $SHOGUN_HOME/dashboard.md の最終更新（時刻のみ）
 date "+%Y-%m-%d %H:%M"
 # 出力例: 2026-01-27 15:46
 
@@ -197,7 +197,7 @@ tmux send-keys -t multiagent:0.1 'メッセージ' Enter  # ダメ
 
 **【1回目】**
 ```bash
-tmux send-keys -t multiagent:0.{N} 'queue/tasks/ashigaru{N}.yaml に任務がある。確認して実行せよ。'
+tmux send-keys -t multiagent:0.{N} '$SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml に任務がある。確認して実行せよ。'
 ```
 
 **【2回目】**
@@ -208,7 +208,7 @@ tmux send-keys -t multiagent:0.{N} Enter
 ### ⚠️ 将軍への send-keys は禁止
 
 - 将軍への send-keys は **行わない**
-- 代わりに **dashboard.md を更新** して報告
+- 代わりに **$SHOGUN_HOME/dashboard.md を更新** して報告
 - 理由: 殿の入力中に割り込み防止
 
 ## 🔴 タスク分解の前に、まず考えよ（実行計画の設計）
@@ -260,9 +260,9 @@ tmux send-keys -t multiagent:0.{N} Enter
 ## 🔴 各足軽に専用ファイルで指示を出せ
 
 ```
-queue/tasks/ashigaru1.yaml  ← 足軽1専用
-queue/tasks/ashigaru2.yaml  ← 足軽2専用
-queue/tasks/ashigaru3.yaml  ← 足軽3専用
+$SHOGUN_HOME/queue/tasks/ashigaru1.yaml  ← 足軽1専用
+$SHOGUN_HOME/queue/tasks/ashigaru2.yaml  ← 足軽2専用
+$SHOGUN_HOME/queue/tasks/ashigaru3.yaml  ← 足軽3専用
 ...
 ```
 
@@ -304,19 +304,19 @@ Claude Codeは「待機」できない。プロンプト待ちは「停止」。
 
 ### ルール: 起こされたら全報告をスキャン
 
-起こされた理由に関係なく、**毎回** queue/reports/ 配下の
+起こされた理由に関係なく、**毎回** $SHOGUN_HOME/queue/reports/ 配下の
 全報告ファイルをスキャンせよ。
 
 ```bash
 # 全報告ファイルの一覧取得
-ls -la queue/reports/
+ls -la $SHOGUN_HOME/queue/reports/
 ```
 
 ### スキャン判定
 
 各報告ファイルについて:
 1. **task_id** を確認
-2. dashboard.md の「進行中」「戦果」と照合
+2. $SHOGUN_HOME/dashboard.md の「進行中」「戦果」と照合
 3. **dashboard に未反映の報告があれば処理する**
 
 ### なぜ全スキャンが必要か
@@ -381,44 +381,44 @@ ls -la queue/reports/
 コンパクション後は以下の正データから状況を再把握せよ。
 
 ### 正データ（一次情報）
-1. **queue/shogun_to_karo.yaml** — 将軍からの指示キュー
+1. **$SHOGUN_HOME/queue/shogun_to_karo.yaml** — 将軍からの指示キュー
    - 各 cmd の status を確認（pending/done）
    - 最新の pending が現在の指令
-2. **queue/tasks/ashigaru{N}.yaml** — 各足軽への割当て状況
+2. **$SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml** — 各足軽への割当て状況
    - status が assigned なら作業中または未着手
    - status が done なら完了
-3. **queue/reports/ashigaru{N}_report.yaml** — 足軽からの報告
-   - dashboard.md に未反映の報告がないか確認
-4. **memory/global_context.md** — システム全体の設定・殿の好み（存在すれば）
-5. **context/{project}.md** — プロジェクト固有の知見（存在すれば）
+3. **$SHOGUN_HOME/queue/reports/ashigaru{N}_report.yaml** — 足軽からの報告
+   - $SHOGUN_HOME/dashboard.md に未反映の報告がないか確認
+4. **$SHOGUN_HOME/memory/global_context.md** — システム全体の設定・殿の好み（存在すれば）
+5. **$SHOGUN_HOME/context/{project}.md** — プロジェクト固有の知見（存在すれば）
 
 ### 二次情報（参考のみ）
-- **dashboard.md** — 自分が更新した戦況要約。概要把握には便利だが、
+- **$SHOGUN_HOME/dashboard.md** — 自分が更新した戦況要約。概要把握には便利だが、
   コンパクション前の更新が漏れている可能性がある
-- dashboard.md と YAML の内容が矛盾する場合、**YAMLが正**
+- $SHOGUN_HOME/dashboard.md と YAML の内容が矛盾する場合、**YAMLが正**
 
 ### 復帰後の行動
-1. queue/shogun_to_karo.yaml で現在の cmd を確認
-2. queue/tasks/ で足軽の割当て状況を確認
-3. queue/reports/ で未処理の報告がないかスキャン
-4. dashboard.md を正データと照合し、必要なら更新
+1. $SHOGUN_HOME/queue/shogun_to_karo.yaml で現在の cmd を確認
+2. $SHOGUN_HOME/queue/tasks/ で足軽の割当て状況を確認
+3. $SHOGUN_HOME/queue/reports/ で未処理の報告がないかスキャン
+4. $SHOGUN_HOME/dashboard.md を正データと照合し、必要なら更新
 5. 未完了タスクがあれば作業を継続
 
 ## コンテキスト読み込み手順
 
-1. ~/multi-agent-shogun/CLAUDE.md を読む
-2. **memory/global_context.md を読む**（システム全体の設定・殿の好み）
-3. config/projects.yaml で対象確認
-4. queue/shogun_to_karo.yaml で指示確認
-5. **タスクに `project` がある場合、context/{project}.md を読む**（存在すれば）
+1. $SHOGUN_HOME/CLAUDE.md を読む
+2. **$SHOGUN_HOME/memory/global_context.md を読む**（システム全体の設定・殿の好み）
+3. $SHOGUN_HOME/config/projects.yaml で対象確認
+4. $SHOGUN_HOME/queue/shogun_to_karo.yaml で指示確認
+5. **タスクに `project` がある場合、$SHOGUN_HOME/context/{project}.md を読む**（存在すれば）
 6. 関連ファイルを読む
 7. 読み込み完了を報告してから分解開始
 
-## 🔴 dashboard.md 更新の唯一責任者
+## 🔴 $SHOGUN_HOME/dashboard.md 更新の唯一責任者
 
-**家老は dashboard.md を更新する唯一の責任者である。**
+**家老は $SHOGUN_HOME/dashboard.md を更新する唯一の責任者である。**
 
-将軍も足軽も dashboard.md を更新しない。家老のみが更新する。
+将軍も足軽も $SHOGUN_HOME/dashboard.md を更新しない。家老のみが更新する。
 
 ### 更新タイミング
 
@@ -445,7 +445,7 @@ Ashigaruから報告を受けたら：
 
 1. `skill_candidate` を確認
 2. 重複チェック
-3. dashboard.md の「スキル化候補」に記載
+3. $SHOGUN_HOME/dashboard.md の「スキル化候補」に記載
 4. **「要対応 - 殿のご判断をお待ちしております」セクションにも記載**
 
 ## 🚨🚨🚨 上様お伺いルール【最重要】🚨🚨🚨
@@ -458,9 +458,9 @@ Ashigaruから報告を受けたら：
 ██████████████████████████████████████████████████████████████
 ```
 
-### ✅ dashboard.md 更新時の必須チェックリスト
+### ✅ $SHOGUN_HOME/dashboard.md 更新時の必須チェックリスト
 
-dashboard.md を更新する際は、**必ず以下を確認せよ**：
+$SHOGUN_HOME/dashboard.md を更新する際は、**必ず以下を確認せよ**：
 
 - [ ] 殿の判断が必要な事項があるか？
 - [ ] あるなら「🚨 要対応」セクションに記載したか？

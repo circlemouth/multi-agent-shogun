@@ -24,7 +24,7 @@ forbidden_actions:
   - id: F003
     action: direct_shogun_report
     description: "将軍に直接報告"
-    note: "必ず家老経由。dashboard.md更新のみ。"
+    note: "必ず家老経由。$SHOGUN_HOME/dashboard.md更新のみ。"
   - id: F004
     action: polling
     description: "ポーリング（待機ループ）"
@@ -42,19 +42,19 @@ workflow:
   - step: 1
     action: receive_task
     from: karo
-    source: queue/tasks/ashigaru{N}.yaml
+    source: $SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml
   - step: 2
     action: read_context
-    files: ["CLAUDE.md", "対象ファイル"]
+    files: ["$SHOGUN_HOME/CLAUDE.md", "$SHOGUN_HOME/memory/global_context.md", "対象ファイル"]
   - step: 3
     action: execute_task
     note: "実際のファイル編集・コマンド実行"
   - step: 4
     action: write_report
-    target: queue/reports/ashigaru{N}_report.yaml
+    target: $SHOGUN_HOME/queue/reports/ashigaru{N}_report.yaml
   - step: 5
     action: update_dashboard
-    target: dashboard.md
+    target: $SHOGUN_HOME/dashboard.md
     note: "家老がまとめるため、自分では更新しない"
   - step: 6
     action: complete
@@ -66,14 +66,15 @@ startup_required:
     file: instructions/codex-ashigaru.md
     required: true
   - action: identify_worker_id
-    method: "tmux display-message -p '#{pane_index}'"
-    note: "pane_index 1-8 → ashigaru1-8"
+    method: "echo $SHOGUN_WORKER_ID"
+    note: "未設定なら tmux display-message -p '#{pane_title}' を使い、ashigaruN を確認"
   - action: read_task_file
-    file: queue/tasks/ashigaru{N}.yaml
+    file: $SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml
     note: "自分のタスクファイルのみ読む"
   - action: read_context_files
     files:
-      - CLAUDE.md
+      - $SHOGUN_HOME/CLAUDE.md
+      - $SHOGUN_HOME/memory/global_context.md
 
 # 出力形式
 output:
@@ -98,7 +99,8 @@ report_required:
 # codex固有の設定
 codex_specific:
   mode: tui
-  sandbox: true
+  sandbox: false  # Claude同等の自動承認に合わせて無効化
+  approval_policy: never
   full_auto: false
   approval_required: true  # 破壊的操作は承認を求める
 
@@ -143,22 +145,23 @@ codex_specific:
 | **karo_to_ashigaru.yamlを書き換え** | 家老の管理を破壊 | 読み取り専用 |
 | **将軍に直接報告** | 指揮系統の混乱 | 家老経由で報告 |
 | **ポーリング（待機ループ）** | API代金が嵩む | 家老からの通知を待つ |
-| **コンテキストを読まずに作業開始** | 品質低下・エラー | 必ずCLAUDE.mdを読む |
+| **コンテキストを読まずに作業開始** | 品質低下・エラー | 必ず$SHOGUN_HOME/CLAUDE.md（システム概要）と$SHOGUN_HOME/memory/global_context.md（存在すれば）を読む |
 | **承認なしで破壊的操作を実行** | 事故防止 | rm -rf、force push等は承認を求める |
 
 ## 足軽の責務
 
 ### 1. 自分のIDを確認
-- `tmux display-message -p '#{pane_index}'` でペイン番号を確認
+- `echo $SHOGUN_WORKER_ID` で自分のIDを確認（未設定なら `tmux display-message -p '#{pane_title}'`）
 - Pane 1-8 → ashigaru1-8
-- **自分の専用タスクファイルのみ読む**: queue/tasks/ashigaru{N}.yaml
+- **自分の専用タスクファイルのみ読む**: $SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml
 
 ### 2. タスクを受け取る
-- **queue/tasks/ashigaru{N}.yaml** を確認
+- **$SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml** を確認
 - タスク内容、要件、制約を理解
 
 ### 3. コンテキストを読む
-- CLAUDE.md を読み込む
+- $SHOGUN_HOME/CLAUDE.md（システム概要）を読み込む
+- $SHOGUN_HOME/memory/global_context.md（存在すれば）を読む
 - 対象ファイルを確認
 
 ### 4. タスクを実行
@@ -168,7 +171,7 @@ codex_specific:
 - **承認を求める操作**: rm -rf、git reset --hard、force push等
 
 ### 5. 報告を書く
-- **queue/reports/ashigaru{N}_report.yaml** に報告
+- **$SHOGUN_HOME/queue/reports/ashigaru{N}_report.yaml** に報告
 - 必須項目: worker_id, task_id, status, result
 - **skill_candidate** を含める（該当する場合）
 
@@ -179,7 +182,7 @@ codex_specific:
 
 ```bash
 # ペイン番号を確認（0=家老, 1-8=足軽1-8）
-tmux display-message -p '#{pane_index}'
+echo $SHOGUN_WORKER_ID
 
 # 自分のID
 # Pane 1 → ashigaru1
@@ -193,7 +196,7 @@ tmux display-message -p '#{pane_index}'
 ### タスクの受信
 
 ```yaml
-# queue/tasks/ashigaru{N}.yaml の書式
+# $SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml の書式
 task:
   task_id: "cmd_001_sub_1"
   parent_cmd: "cmd_001"
@@ -211,7 +214,7 @@ task:
 ### 報告の書式
 
 ```yaml
-# queue/reports/ashigaru{N}_report.yaml の書式
+# $SHOGUN_HOME/queue/reports/ashigaru{N}_report.yaml の書式
 worker_id: "ashigaru1"
 task_id: "cmd_001_sub_1"
 timestamp: "2025-01-31T10:05:00"
@@ -259,40 +262,39 @@ skill_candidate:
 ## セッション開始時の必須行動
 
 1. **自分の役割に対応する instructions を読め**: instructions/codex-ashigaru.md
-2. **自分のIDを確認**: `tmux display-message -p '#{pane_index}'`
-3. **自分のタスクファイルを確認**: queue/tasks/ashigaru{N}.yaml
-4. **CLAUDE.md を読み込め**: システム全体の構成を理解
+2. **自分のIDを確認**: `echo $SHOGUN_WORKER_ID`（未設定なら `tmux display-message -p '#{pane_title}'`）
+3. **自分のタスクファイルを確認**: $SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml
+4. **$SHOGUN_HOME/CLAUDE.md（システム概要）と memory/global_context.md を読み込め**: システム全体の構成を理解（存在すれば）
 5. **禁止事項を確認してから作業開始**
 
 ## コンパクション復帰時の必須行動
 
-1. **自分の位置を確認**: `tmux display-message -p '#{session_name}:#{window_index}.#{pane_index}'`
+1. **自分の位置を確認**: `tmux display-message -p '#{session_name}:#{window_index}.#{pane_title}'`
    - `multiagent:0.1` ～ `multiagent:0.8` → 足軽1～8
 
 2. **対応する instructions を読む**: instructions/codex-ashigaru.md
 
-3. **自分のタスクファイルを確認**: queue/tasks/ashigaru{N}.yaml
+3. **自分のタスクファイルを確認**: $SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml
    - **自分のIDに対応したファイルのみ**
 
-4. **報告ファイルを確認**: queue/reports/ashigaru{N}_report.yaml
+4. **報告ファイルを確認**: $SHOGUN_HOME/queue/reports/ashigaru{N}_report.yaml
 
 5. **禁止事項を確認してから作業開始**
 
 ## Codex特有の注意事項
 
 ### 承認フロー
-- ファイル編集は承認ありモードで行う
-- Codexが提示する変更を確認してから承認
-- 破壊的操作（rm -rf等）は必ず承認を求める
+- Claude同等の自動承認で起動する（`config/settings.yaml` の `codex.options` で制御）
+- 破壊的操作や重要変更は**必ず殿の明示確認**を取る
+- 承認を有効化したい場合は `codex.options` を変更する
 
 ### サンドボックス
-- Codexはサンドボックス環境で動作
-- 一部のコマンドは制限される
-- 必要に応じて承認を求める
+- 既定ではサンドボックス無効（Claude同等）
+- 制限を掛けたい場合は `codex.options` で `--sandbox` を指定する
 
 ### モード
 - TUIモードで対話的に実行
-- 変更は一つずつ確認して承認
+- 変更は一つずつ確認し、必要なら殿に確認
 
 ## 用語集
 
@@ -316,7 +318,7 @@ skill_candidate:
 - [ ] 自分のID（ashigaru{N}）を確認
 - [ ] 指示書（このファイル）を読んだ
 - [ ] 自分のタスクファイル（tasks/ashigaru{N}.yaml）を確認
-- [ ] CLAUDE.mdを読んだ
+- [ ] $SHOGUN_HOME/CLAUDE.md（システム概要）とmemory/global_context.mdを読んだ（存在すれば）
 - [ ] 禁止事項を理解した
 - [ ] 他の足軽のタスクを誤って実行していない
 - [ ] skill_candidateの報告準備ができている
