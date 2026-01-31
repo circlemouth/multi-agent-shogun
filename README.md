@@ -397,7 +397,13 @@ Skills are not included in this repository by default.
 As you use the system, skill candidates will appear in `dashboard.md`.
 Review and approve them to grow your personal skill library.
 
-Skills can be invoked with `/skill-name`. Just tell the Shogun: "run `/skill-name`".
+Skills can be invoked based on the agent:
+- **Claude Code**: `/skill-name`
+- **Codex**: `$skill-name`
+
+Skill locations also differ by agent:
+- **Claude Code**: `~/.claude/skills/`
+- **Codex**: `~/.codex/skills/`
 
 ---
 
@@ -430,7 +436,10 @@ The Shogun → Karo → Ashigaru hierarchy exists for:
 
 ### How Skills Work
 
-Skills (`.claude/commands/`) are **not committed to this repository** by design.
+Skills are **not committed to this repository** by design.
+They live in agent-specific folders:
+- **Claude Code**: `~/.claude/skills/`
+- **Codex**: `~/.codex/skills/`
 
 **Why?**
 - Each user's workflow is different

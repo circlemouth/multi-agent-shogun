@@ -1,14 +1,21 @@
 ---
 name: skill-creator
-description: 汎用的な作業パターンを発見した際に、再利用可能なClaude Codeスキルを自動生成する。繰り返し使えるワークフロー、ベストプラクティス、ドメイン知識をスキル化する時に使用。
+description: 汎用的な作業パターンを発見した際に、再利用可能なスキルを自動生成する。config/settings.yaml の agent に応じて Claude Code / Codex の仕様でスキル化する時に使用。
 ---
 
 # Skill Creator - スキル自動生成
 
 ## Overview
 
-作業中に発見した汎用的なパターンを、再利用可能なClaude Codeスキルとして保存する。
+作業中に発見した汎用的なパターンを、再利用可能なスキルとして保存する。
 これにより、同じ作業を繰り返す際の品質と効率が向上する。
+
+## Agent 判定（必須）
+
+最初に `config/settings.yaml` の `agent` を確認し、以降の仕様を切り替える。
+
+- `agent: claude` → **Claude Code 仕様**
+- `agent: codex` → **Codex 仕様**
 
 ## When to Create a Skill
 
@@ -19,7 +26,7 @@ description: 汎用的な作業パターンを発見した際に、再利用可�
 3. **安定性**: 頻繁に変わらない手順やルール
 4. **価値**: スキル化することで明確なメリットがある
 
-## Skill Structure
+## Skill Structure（共通）
 
 生成するスキルは以下の構造に従う：
 
@@ -27,10 +34,60 @@ description: 汎用的な作業パターンを発見した際に、再利用可�
 skill-name/
 ├── SKILL.md          # 必須
 ├── scripts/          # オプション（実行スクリプト）
-└── resources/        # オプション（参照ファイル）
+├── references/       # オプション（参照ドキュメント）
+└── assets/           # オプション（テンプレ/素材）
 ```
 
-## SKILL.md Template
+## Codex 仕様（agent: codex の場合）
+
+### 保存先
+- 既定: `~/.codex/skills/{skill-name}/`
+
+### 命名規則
+- 小文字・数字・ハイフンのみ
+- 64文字以内（推奨：短く）
+
+### SKILL.md（Codex）
+
+Codex は SKILL.md の YAML frontmatter の `name` / `description` をトリガー判定に使用する。
+必要に応じて `metadata.short-description` を追加する。
+
+```markdown
+---
+name: {skill-name}
+description: {いつこのスキルを使うか、具体的なユースケースを明記}
+metadata:
+  short-description: {短い説明（任意）}
+---
+
+# {Skill Title}
+
+## Overview
+{このスキルが何をするか}
+
+## Instructions
+{具体的な手順}
+```
+
+### 追加メタデータ（任意）
+
+Codex では `agents/openai.yaml` で UI 表示や依存関係を定義できる（任意）。
+必要な場合のみ追加する。
+
+### 推奨：サブモジュールのテンプレートを使う
+
+Codex 付属のテンプレートで雛形を生成し、内容を埋める。
+
+```bash
+python codex/codex-rs/core/src/skills/assets/samples/skill-creator/scripts/init_skill.py <skill-name> --path ~/.codex/skills
+```
+
+## Claude Code 仕様（agent: claude の場合）
+
+### 保存先
+- 既定: `~/.claude/skills/shogun-{skill-name}/`
+
+### SKILL.md Template（Claude）
 
 ```markdown
 ---
@@ -67,7 +124,7 @@ description: {いつこのスキルを使うか、具体的なユースケース
    - 動詞+名詞 or 名詞+名詞
 
 3. description の記述（最重要）
-   - Claude がいつこのスキルを使うか判断する材料
+   - エージェントがいつこのスキルを使うか判断する材料
    - 具体的なユースケース、ファイルタイプ、アクション動詞を含める
    - 悪い例: "ドキュメント処理スキル"
    - 良い例: "PDFからテーブルを抽出しCSVに変換する。データ分析ワークフローで使用。"
@@ -78,7 +135,8 @@ description: {いつこのスキルを使うか、具体的なユースケース
    - エッジケースの対処
 
 5. 保存
-   - パス: ~/.claude/skills/shogun-{skill-name}/
+   - **agent: codex** → `~/.codex/skills/{skill-name}/`
+   - **agent: claude** → `~/.claude/skills/shogun-{skill-name}/`
    - 既存スキルと名前が被らないか確認
 
 ## 使用フロー

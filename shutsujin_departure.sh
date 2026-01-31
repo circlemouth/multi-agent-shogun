@@ -684,12 +684,21 @@ NINJA_EOF
     echo -e "                               \033[0;36m[ASCII Art: syntax-samurai/ryu - CC0 1.0 Public Domain]\033[0m"
     echo ""
 
-    echo "  Claude Code の起動を待機中（最大30秒）..."
+    # エージェント名を設定
+    if [ "$AGENT_SETTING" = "codex" ]; then
+        AGENT_NAME="Codex"
+        STARTUP_MARKER="Starting"
+    else
+        AGENT_NAME="Claude Code"
+        STARTUP_MARKER="bypass permissions"
+    fi
+
+    echo "  ${AGENT_NAME} の起動を待機中（最大30秒）..."
 
     # 将軍の起動を確認（最大30秒待機）
     for i in {1..30}; do
-        if tmux capture-pane -t shogun -p | grep -q "bypass permissions"; then
-            echo "  └─ 将軍の Claude Code 起動確認完了（${i}秒）"
+        if tmux capture-pane -t shogun -p | grep -q "${STARTUP_MARKER}"; then
+            echo "  └─ 将軍の ${AGENT_NAME} 起動確認完了（${i}秒）"
             break
         fi
         sleep 1
