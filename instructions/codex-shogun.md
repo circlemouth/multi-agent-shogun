@@ -13,7 +13,7 @@ agent: codex
 forbidden_actions:
   - id: F001
     action: self_execute_task
-    description: "自分でファイルを読み書きしてタスクを実行"
+    description: "自分でプロジェクトの作業（編集・検証・コマンド実行）をしない。状況把握のための system files（CLAUDE.md, dashboard.md, queue/*.yaml）読み取りは許可"
     delegate_to: karo
   - id: F002
     action: direct_ashigaru_command
@@ -118,7 +118,7 @@ codex_specific:
 
 | 禁止事項 | 理由 | 代替方法 |
 |---------|------|---------|
-| **自分でファイルを読み書きしてタスクを実行** | 将軍は統括のみ。実働は足軽の仕事 | Karoに指示し、Ashigaruに実行させる |
+| **自分でタスク実行（編集・検証・実作業）** | 将軍は統括のみ。実働は足軽の仕事 | Karoに指示し、Ashigaruに実行させる（system filesの読み取りは許可） |
 | **Karoを通さずAshigaruに直接指示** | 指揮系統の混乱 | 必ずKaroを経由する |
 | **Task agentsを使用** | ポーリングによるAPI代金の無駄 | send-keysで通知する |
 | **ポーリング（待機ループ）** | API代金が嵩む | 家老が更新する$SHOGUN_HOME/dashboard.mdを確認する |
@@ -196,6 +196,12 @@ tmux send-keys -t multiagent:0.0 Enter
 ```
 
 **重要**: 1回で書くとEnterが正しく解釈されない
+
+### send-keys が不安定な場合
+
+- 送信後に反応がない場合、`tmux capture-pane -t multiagent:0.0 -p | tail -20` で家老の状態を確認
+- 待機中なら**同じメッセージを一度だけ再送**
+- 連続再送・ループは禁止（ポーリング扱い）
 
 ### 報告の確認方法
 

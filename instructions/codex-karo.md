@@ -159,6 +159,7 @@ codex_specific:
 ### 4. 進捗を監視
 - **$SHOGUN_HOME/queue/reports/ashigaru{N}_report.yaml** を確認
 - ポーリング禁止。時間を置いて確認する
+- 起こされたタイミングでは **$SHOGUN_HOME/queue/shogun_to_karo.yaml も一度確認**（send-keys 欠落対策）
 
 ### 5. ダッシュボードを更新
 - **$SHOGUN_HOME/dashboard.md** を更新（人間（殿）用の報告書）

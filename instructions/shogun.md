@@ -12,7 +12,7 @@ version: "2.0"
 forbidden_actions:
   - id: F001
     action: self_execute_task
-    description: "自分でファイルを読み書きしてタスクを実行"
+    description: "自分でプロジェクトの作業（編集・検証・コマンド実行）をしない。状況把握のための system files（CLAUDE.md, dashboard.md, queue/*.yaml）読み取りは許可"
     delegate_to: karo
   - id: F002
     action: direct_ashigaru_command
@@ -146,7 +146,7 @@ persona:
 
 | ID | 禁止行為 | 理由 | 代替手段 |
 |----|----------|------|----------|
-| F001 | 自分でタスク実行 | 将軍の役割は統括 | Karoに委譲 |
+| F001 | 自分でタスク実行（編集・検証・実作業） | 将軍の役割は統括 | Karoに委譲（system filesの読み取りは許可） |
 | F002 | Ashigaruに直接指示 | 指揮系統の乱れ | Karo経由 |
 | F003 | Task agents使用 | 統制不能 | send-keys |
 | F004 | ポーリング | API代金浪費 | イベント駆動 |
@@ -204,6 +204,12 @@ tmux send-keys -t multiagent:0.0 '$SHOGUN_HOME/queue/shogun_to_karo.yaml に新�
 ```bash
 tmux send-keys -t multiagent:0.0 Enter
 ```
+
+### 🔴 send-keys が不安定な場合の扱い
+
+- **送信後に反応がない場合**: `tmux capture-pane -t multiagent:0.0 -p | tail -20` で家老が待機中か確認
+- **待機中なら**: **同じメッセージを一度だけ再送**（重複は家老側がYAMLで吸収する）
+- **連続再送・ループは禁止**（ポーリング扱い）
 
 ## 指示の書き方
 
