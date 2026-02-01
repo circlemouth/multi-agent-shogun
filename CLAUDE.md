@@ -84,10 +84,12 @@ summaryの「次のステップ」を見てすぐ作業してはならぬ。ま�
   tmux send-keys -t multiagent:0.0 Enter
   ```
 
-### 報告の流れ（割り込み防止設計）
-- **下→上への報告**: dashboard.md 更新のみ（send-keys 禁止）
-- **上→下への指示**: YAML + send-keys で起こす
-- 理由: 殿（人間）の入力中に割り込みが発生するのを防ぐ
+### 報告・指示の流れ（割り込み防止設計）
+- **Shogun → Karo**: `queue/shogun_to_karo.yaml` に書く + send-keys で起こす（必須）
+- **Ashigaru → Karo**: `queue/reports/ashigaru{N}_report.yaml` に書く + send-keys で起こす（必須）
+- **Karo → Shogun**: `dashboard.md` 更新のみ（send-keys 禁止）
+- **足軽報告後の運用**: 家老は次の作業指示（割当 or 待機の明示）を必ず出す
+- **補足**: send-keys は通知のための合図。正データは常に YAML。送信に不安がある場合は**一度だけ再送**し、受信側は起こされたら必ず正データを確認する
 
 ### ファイル構成
 ```
