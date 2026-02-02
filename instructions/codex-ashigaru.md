@@ -66,8 +66,8 @@ startup_required:
     file: instructions/codex-ashigaru.md
     required: true
   - action: identify_worker_id
-    method: "echo $SHOGUN_WORKER_ID"
-    note: "未設定なら tmux display-message -p '#{pane_title}' を使い、ashigaruN を確認"
+    method: "tmux display-message -p '#{pane_title}'"
+    note: "pane_title で自認（ashigaruN になっているはず）"
   - action: read_task_file
     file: $SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml
     note: "自分のタスクファイルのみ読む"
@@ -151,8 +151,8 @@ codex_specific:
 ## 足軽の責務
 
 ### 1. 自分のIDを確認
-- `echo $SHOGUN_WORKER_ID` で自分のIDを確認（未設定なら `tmux display-message -p '#{pane_title}'`）
-- Pane 1-8 → ashigaru1-8
+- `tmux display-message -p '#{pane_title}'` で自分のIDを確認
+- 表示結果が `ashigaruN` であることを確認
 - **自分の専用タスクファイルのみ読む**: $SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml
 
 ### 2. タスクを受け取る
@@ -181,8 +181,8 @@ codex_specific:
 ## 自分のIDの確認方法
 
 ```bash
-# ペイン番号を確認（0=家老, 1-8=足軽1-8）
-echo $SHOGUN_WORKER_ID
+# ペインタイトルを確認（karo / ashigaru1-8）
+tmux display-message -p '#{pane_title}'
 
 # 自分のID
 # Pane 1 → ashigaru1
@@ -262,7 +262,7 @@ skill_candidate:
 ## セッション開始時の必須行動
 
 1. **自分の役割に対応する instructions を読め**: instructions/codex-ashigaru.md
-2. **自分のIDを確認**: `echo $SHOGUN_WORKER_ID`（未設定なら `tmux display-message -p '#{pane_title}'`）
+2. **自分のIDを確認**: `tmux display-message -p '#{pane_title}'`
 3. **自分のタスクファイルを確認**: $SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml
 4. **$SHOGUN_HOME/AGENTS.md（システム概要）と memory/global_context.md を読み込め**: システム全体の構成を理解（存在すれば）
 5. **禁止事項を確認してから作業開始**

@@ -30,7 +30,7 @@ Memory MCPには、コンパクションを超えて永続化すべきルール�
 
 コンパクション後は作業前に必ず以下を実行せよ：
 
-1. **自分の位置を確認**: `tmux display-message -p '#{session_name}:#{window_index}.#{pane_index}'`
+1. **自分の位置を確認**: `tmux display-message -p '#{session_name}:#{window_index}.#{pane_title}'`
    - `shogun:0.0` → 将軍
    - `multiagent:0.0` → 家老
    - `multiagent:0.1` ～ `multiagent:0.8` → 足軽1～8
@@ -85,9 +85,10 @@ summaryの「次のステップ」を見てすぐ作業してはならぬ。ま�
   ```
 
 ### 報告の流れ（割り込み防止設計）
-- **下→上への報告**: dashboard.md 更新のみ（send-keys 禁止）
+- **家老→将軍への報告**: dashboard.md 更新のみ（send-keys 禁止）
+- **足軽→家老への報告**: YAML + send-keys で通知可能
 - **上→下への指示**: YAML + send-keys で起こす
-- 理由: 殿（人間）の入力中に割り込みが発生するのを防ぐ
+- 理由: 殿（人間）が将軍セッションで入力中に割り込みが発生するのを防ぐため、家老→将軍のみsend-keysを禁止
 
 ### ファイル構成
 ```
