@@ -679,11 +679,12 @@ tmux kill-session -t multiagent
 Running `first_setup.sh` automatically adds these aliases to `~/.bashrc`:
 
 ```bash
-alias css='cd /mnt/c/tools/multi-agent-shogun && ./shutsujin_departure.sh'  # Setup + deploy
-alias csm='cd /mnt/c/tools/multi-agent-shogun'                              # Navigate to directory only
+alias csst='cd /mnt/c/tools/multi-agent-shogun && ./shutsujin_departure.sh'  # Setup + deploy
+alias css='tmux attach-session -t shogun'                                    # Attach to Shogun
+alias csm='tmux attach-session -t multiagent'                               # Attach to workers
 ```
 
-*To apply aliases, run `source ~/.bashrc` or restart your terminal. On WSL, run `wsl --shutdown` in PowerShell first — simply closing the window does not terminate WSL.*
+*To apply aliases, run `source ~/.bashrc` or restart your terminal. On WSL, run `wsl --shutdown` in PowerShell first — simply closing the window does not terminate WSL. Use `csst` to deploy, then `css`/`csm` to attach.*
 
 </details>
 

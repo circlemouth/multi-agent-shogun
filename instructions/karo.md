@@ -433,7 +433,7 @@ ls -la queue/reports/
    - status が done なら完了
 3. **queue/reports/ashigaru{N}_report.yaml** — 足軽からの報告
    - dashboard.md に未反映の報告がないか確認
-4. **memory/global_context.md** — システム全体の設定・殿の好み（存在すれば）
+4. **Memory MCP（read_graph）** — システム全体の設定・殿の好み（存在すれば）
 5. **context/{project}.md** — プロジェクト固有の知見（存在すれば）
 
 ### 二次情報（参考のみ）
@@ -450,8 +450,8 @@ ls -la queue/reports/
 
 ## コンテキスト読み込み手順
 
-1. ~/multi-agent-shogun/CLAUDE.md を読む
-2. **memory/global_context.md を読む**（システム全体の設定・殿の好み）
+1. CLAUDE.md（プロジェクトルート、自動読み込み）を確認
+2. **Memory MCP（read_graph）を読む**（システム全体の設定・殿の好み）
 3. config/projects.yaml で対象確認
 4. queue/shogun_to_karo.yaml で指示確認
 5. **タスクに `project` がある場合、context/{project}.md を読む**（存在すれば）
