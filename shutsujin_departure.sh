@@ -550,6 +550,10 @@ tmux select-pane -t "multiagent:0.6"
 tmux split-window -v
 tmux split-window -v
 
+# ペイン境界に役割を表示（誤送信防止）
+tmux set-option -t multiagent pane-border-status top
+tmux set-option -t multiagent pane-border-format ' #{pane_title} '
+
 # ペインタイトル設定（0: karo, 1-8: ashigaru1-8）
 PANE_TITLES=("karo" "ashigaru1" "ashigaru2" "ashigaru3" "ashigaru4" "ashigaru5" "ashigaru6" "ashigaru7" "ashigaru8")
 # 色設定（karo: 赤, ashigaru: 青）
@@ -562,7 +566,7 @@ for i in {0..8}; do
     if [ "$i" -ne 0 ]; then
         worker_id="ashigaru${i}"
     fi
-    tmux send-keys -t "multiagent:0.$i" "cd \"$(pwd)\" && export PS1='${PROMPT_STR}' && clear" Enter
+    tmux send-keys -t "multiagent:0.$i" "cd \"$(pwd)\" && export SHOGUN_WORKER_ID='${worker_id}' && export SHOGUN_PANE_TITLE='${PANE_TITLES[$i]}' && export SHOGUN_PANE_INDEX='${i}' && export PS1='${PROMPT_STR}' && clear" Enter
 done
 
 log_success "  └─ 家老・足軽の陣、構築完了"
@@ -588,7 +592,7 @@ if ! tmux new-session -d -s shogun 2>/dev/null; then
     exit 1
 fi
 SHOGUN_PROMPT=$(generate_prompt "将軍" "magenta" "$SHELL_SETTING")
-tmux send-keys -t shogun "cd \"$(pwd)\" && export PS1='${SHOGUN_PROMPT}' && clear" Enter
+tmux send-keys -t shogun "cd \"$(pwd)\" && export SHOGUN_WORKER_ID='shogun' && export SHOGUN_PANE_TITLE='shogun' && export SHOGUN_PANE_INDEX='0' && export PS1='${SHOGUN_PROMPT}' && clear" Enter
 tmux select-pane -t shogun:0.0 -P 'bg=#002b36'  # 将軍の Solarized Dark
 
 log_success "  └─ 将軍の本陣、構築完了"
@@ -803,6 +807,7 @@ echo "     │  Pane 0: 将軍 (SHOGUN)      │  ← 総大将・プロジェ�
 echo "     └─────────────────────────────┘"
 echo ""
 echo "     【multiagentセッション】家老・足軽の陣（3x3 = 9ペイン）"
+echo "     ※ ペイン枠上の役割名（pane_title）が自認の基準"
 echo "     ┌─────────┬─────────┬─────────┐"
 echo "     │  karo   │ashigaru3│ashigaru6│"
 echo "     │  (家老) │ (足軽3) │ (足軽6) │"

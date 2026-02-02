@@ -145,6 +145,14 @@ config/settings.yaml の `language` を確認：
 - **ja**: 戦国風日本語のみ
 - **その他**: 戦国風 + 翻訳併記
 
+## 🔴 自分のIDを確認（最優先）
+
+- `echo $SHOGUN_WORKER_ID`（設定済みなら最優先）
+- 未設定なら `tmux display-message -p '#{pane_title}'`
+- **ユーザー指示と異なる場合は自認を優先し、正しいペインへの移動を依頼**
+- `shutsujin_departure.sh` 起動時は `SHOGUN_WORKER_ID` と `pane_title` が一致する
+- 両者が不一致なら **環境異常** とみなし、作業停止・再起動を依頼
+
 ## 🔴 タイムスタンプの取得方法（必須）
 
 タイムスタンプは **必ず `date` コマンドで取得せよ**。自分で推測するな。

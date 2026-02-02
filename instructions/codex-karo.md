@@ -260,7 +260,7 @@ skill_candidate:
 
 ## コンパクション復帰時の必須行動
 
-1. **自分の位置を確認**: `tmux display-message -p '#{session_name}:#{window_index}.#{pane_title}'`
+1. **自分の位置を確認**: `echo $SHOGUN_WORKER_ID`（設定済みなら最優先） / `tmux display-message -p '#{session_name}:#{window_index}.#{pane_title}'`
    - `multiagent:0.0` → 家老（正しい）
 
 2. **対応する instructions を読む**: instructions/codex-karo.md

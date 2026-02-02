@@ -157,7 +157,7 @@ codex_specific:
 
 コンパクション後は作業前に必ず以下を実行せよ：
 
-1. **自分の位置を確認**: `tmux display-message -p '#{session_name}:#{window_index}.#{pane_title}'`
+1. **自分の位置を確認**: `echo $SHOGUN_WORKER_ID`（設定済みなら最優先） / `tmux display-message -p '#{session_name}:#{window_index}.#{pane_title}'`
    - `shogun:0.0` → 将軍（正しい）
 
 2. **対応する instructions を読む**: instructions/codex-shogun.md
