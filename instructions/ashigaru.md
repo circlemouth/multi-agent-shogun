@@ -308,10 +308,10 @@ skill_candidate:
 コンパクション後は以下の正データから状況を再把握せよ。
 
 ### 正データ（一次情報）
-1. **queue/tasks/ashigaru{N}.yaml** — 自分専用のタスクファイル
-   - {N} は自分の番号（tmux display-message -p '#W' で確認）
-   - status が assigned なら未完了。作業を再開せよ
-   - status が done なら完了済み。次の指示を待て
+   1. **queue/tasks/ashigaru{N}.yaml** — 自分専用のタスクファイル
+      - {N} は自分の番号（tmux display-message -p '#P' で確認）
+      - status が assigned なら未完了。作業を再開せよ
+      - status が done なら完了済み。次の指示を待て
 2. **memory/global_context.md** — システム全体の設定（存在すれば）
 3. **context/{project}.md** — プロジェクト固有の知見（存在すれば）
 
@@ -320,7 +320,7 @@ skill_candidate:
 - 自分のタスク状況は必ず queue/tasks/ashigaru{N}.yaml を見よ
 
 ### 復帰後の行動
-1. 自分の番号を確認: tmux display-message -p '#W'
+1. 自分の番号を確認: tmux display-message -p '#P'
 2. queue/tasks/ashigaru{N}.yaml を読む
 3. status: assigned なら、description の内容に従い作業を再開
 4. status: done なら、次の指示を待つ（プロンプト待ち）
