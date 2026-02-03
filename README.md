@@ -273,7 +273,6 @@ agent: codex
 codex:
   model: gpt-5.2-codex
 ```
-Mapping guideline: **Opus-equivalent = `high`**, **Sonnet-equivalent = `medium`**.
 
 ### MCP servers
 

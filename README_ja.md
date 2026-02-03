@@ -356,7 +356,7 @@ screenshot:
 | Layer 1: Memory MCP | `memory/shogun_memory.jsonl` | プロジェクト横断・セッションを跨ぐ長期記憶 |
 | Layer 2: Project | `config/projects.yaml`, `projects/<id>.yaml`, `context/{project}.md` | プロジェクト固有情報・技術知見 |
 | Layer 3: YAML Queue | `queue/shogun_to_karo.yaml`, `queue/tasks/`, `queue/reports/` | タスク管理・指示と報告の正データ |
-| Layer 4: Session | CLAUDE.md / AGENTS.md, instructions/*.md | 作業中コンテキスト（/clearで破棄） |
+| Layer 4: Session | CLAUDE.md, instructions/*.md | 作業中コンテキスト（/clearで破棄） |
 
 この設計により：
 - どの足軽でも任意のプロジェクトを担当可能
@@ -370,7 +370,7 @@ screenshot:
 
 `/clear` 後の足軽の復帰コスト: **約1,950トークン**（目標5,000の39%）
 
-1. CLAUDE.md / AGENTS.md（自動読み込み）→ shogunシステムの一員と認識
+1. CLAUDE.md（自動読み込み）→ shogunシステムの一員と認識
 2. `tmux display-message -t "$TMUX_PANE" -p '#{@agent_id}'` → 自分の番号を確認
 3. Memory MCP 読み込み → 殿の好みを復元（~700トークン）
 4. タスクYAML 読み込み → 次の仕事を確認（~800トークン）
@@ -754,8 +754,7 @@ multi-agent-shogun/
 │
 ├── memory/                   # Memory MCP保存場所
 ├── dashboard.md              # リアルタイム状況一覧
-├── CLAUDE.md                 # Claude用プロジェクトコンテキスト
-└── AGENTS.md                 # Codex用プロジェクトコンテキスト
+└── CLAUDE.md                 # Claude用プロジェクトコンテキスト
 ```
 
 </details>

@@ -5,7 +5,7 @@
 # 使用方法:
 #   ./shutsujin_departure.sh           # 全エージェント起動（前回の状態を維持）
 #   ./shutsujin_departure.sh -c        # キューをリセットして起動（クリーンスタート）
-#   ./shutsujin_departure.sh -s        # セットアップのみ（AI起動なし）
+#   ./shutsujin_departure.sh -s        # セットアップのみ（Claude起動なし）
 #   ./shutsujin_departure.sh -h        # ヘルプ表示
 
 set -e
@@ -37,7 +37,7 @@ CODEX_SHOGUN_REASONING="high"
 CODEX_WORKER_REASONING="medium"
 CODEX_MODEL=""
 if [ -f "./config/settings.yaml" ]; then
-    CODEX_SHOGUN_REASONING=$(grep "shogun_reasoning:" ./config/settings.yaml 2>/dev/null | sed 's/.*: *//;s/ *#.*//' | tr -d '[:space:]' || echo "low")
+    CODEX_SHOGUN_REASONING=$(grep "shogun_reasoning:" ./config/settings.yaml 2>/dev/null | sed 's/.*: *//;s/ *#.*//' | tr -d '[:space:]' || echo "high")
     CODEX_WORKER_REASONING=$(grep "worker_reasoning:" ./config/settings.yaml 2>/dev/null | sed 's/.*: *//;s/ *#.*//' | tr -d '[:space:]' || echo "medium")
     CODEX_MODEL=$(awk '
         /^codex:/ {in_section=1; next}
@@ -260,7 +260,7 @@ while [[ $# -gt 0 ]]; do
             echo "                      未指定時は前回の状態を維持して起動"
             echo "  -k, --kessen        決戦の陣（全足軽をOpus Thinkingで起動）"
             echo "                      未指定時は平時の陣（足軽1-4=Sonnet, 足軽5-8=Opus）"
-            echo "  -s, --setup-only    tmuxセッションのセットアップのみ（AI起動なし）"
+            echo "  -s, --setup-only    tmuxセッションのセットアップのみ（Claude/Codex起動なし）"
             echo "  -t, --terminal      Windows Terminal で新しいタブを開く"
             echo "  -shell, --shell SH  シェルを指定（bash または zsh）"
             echo "                      未指定時は config/settings.yaml の設定を使用"
@@ -269,7 +269,7 @@ while [[ $# -gt 0 ]]; do
             echo "例:"
             echo "  ./shutsujin_departure.sh              # 前回の状態を維持して出陣"
             echo "  ./shutsujin_departure.sh -c           # クリーンスタート（キューリセット）"
-            echo "  ./shutsujin_departure.sh -s           # セットアップのみ（手動でAI起動）"
+            echo "  ./shutsujin_departure.sh -s           # セットアップのみ（手動でClaude/Codex起動）"
             echo "  ./shutsujin_departure.sh -t           # 全エージェント起動 + ターミナルタブ展開"
             echo "  ./shutsujin_departure.sh -shell bash  # bash用プロンプトで起動"
             echo "  ./shutsujin_departure.sh -k           # 決戦の陣（全足軽Opus Thinking）"
@@ -712,7 +712,6 @@ if [ "$SETUP_ONLY" = false ]; then
 
     # エージェント CLI の存在チェック
     if [ "$AGENT_SETTING" = "codex" ]; then
-        # codexの場合：ビルド済みバイナリかPATHを確認
         if [ ! -f "./codex/codex-rs/target/debug/codex" ] && [ ! -f "./codex/codex-rs/target/release/codex" ] && ! command -v codex &> /dev/null; then
             log_info "⚠️  codex コマンドが見つかりません"
             echo ""
@@ -725,7 +724,6 @@ if [ "$SETUP_ONLY" = false ]; then
             exit 1
         fi
     else
-        # Claudeの場合
         if ! command -v claude &> /dev/null; then
             log_info "⚠️  claude コマンドが見つかりません"
             echo "  first_setup.sh を再実行してください:"
