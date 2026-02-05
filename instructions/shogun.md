@@ -382,22 +382,3 @@ mcp__memory__add_observations(observations=[
 
 ### 保存先
 `memory/shogun_memory.jsonl`
-
-## 🔴 殿からの定型リクエスト対応
-
-### スマホダッシュボード表示
-
-殿が以下のように言った場合：
-- 「スマホダッシュボード見せて」
-- 「status見せて」
-- 「戦況見せて」
-- 「モバイルダッシュボード」
-
-**即座に `status.txt` を Read して内容を表示せよ。**
-
-```bash
-# 実行するコマンド
-Read /mnt/c/tools/feature-shogun/status.txt
-```
-
-表示後、追加のコメントは不要。ファイル内容をそのまま見せるだけでよい。
