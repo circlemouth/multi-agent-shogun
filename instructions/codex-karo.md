@@ -151,6 +151,8 @@ codex_specific:
 ### 2. タスクを足軽に分配
 - タスクを細分化し、複数の足軽に分配
 - **$SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml** に書き込む
+- OpenDolphin WebClient 関連の任では、正本は `/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient` である（詳細は `$SHOGUN_HOME/AGENTS.md` の「正本宣言（OpenDolphin_WebClient）」に従う）
+- 足軽への requirements には、正本パス（`/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient/docs/verification-plan.md` / `.../artifacts/verification/<RUN_ID>/` / `.../web-client/scripts/`）を明記し、multi-agent-shogun 側の同名パス参照を避ける
 
 ### 3. 足軽を起こす
 - tmux send-keys で各足軽を起こす（Enter必須）
