@@ -1,42 +1,74 @@
-# Order file (internal use only)
-claude-shogun-orders.md
+# ══════════════════════════════════════════════════
+# Whitelist-based .gitignore
+# デフォルト全除外 → OSS公開対象のみ許可
+# ══════════════════════════════════════════════════
 
-# Claude Code settings
-.claude/*
+# Step 1: 全て除外
+*
+
+# Step 2: ディレクトリの探索を許可（中身は個別に許可）
+!*/
+
+# Step 3: OSS公開対象ファイルを許可
+!.gitignore
+!.gitattributes
+!AGENTS.md
+!CLAUDE.md
+!CODEX_IMPLEMENTATION.md
+!LICENSE
+!README.md
+!README_ja.md
+
+# Claude Code settings (spinner verbs only, no secrets)
+!.claude/
 !.claude/settings.json
-.mcp.json
 
-# Test outputs (generated during testing)
-test_output/
+# Instructions (core OSS)
+!instructions/
+!instructions/shogun.md
+!instructions/karo.md
+!instructions/ashigaru.md
+!instructions/codex-*.md
 
-# Generated skills (local development)
-skills/
+# Startup script
+!shutsujin_departure.sh
+!first_setup.sh
+!setup.sh
+!install.bat
 
-# Temporary files
-*.tmp
-*.bak
+# Templates
+!templates/
+!templates/**
 
-# Demo/analysis outputs (generated during tasks)
-demo_output/
-
-# Runtime data (generated during operation)
-output/
-queue/research/
-queue/tasks/
-queue/reports/
-
-# Memory MCP data (local to each installation)
-memory/
-
-# Project context (local to each installation, except README)
-context/
+# Context README
+!context/
 !context/README.md
-queue/*.yaml
-dashboard.md
-config/projects.yaml
-status/
-config/settings.yaml
-logs/
 
-# Project details (contains client/confidential info)
-projects/
+# Scripts
+!scripts/
+!scripts/inbox_watcher.sh
+!scripts/inbox_write.sh
+!scripts/ntfy.sh
+!scripts/ntfy_listener.sh
+
+# Config samples (local configs are intentionally untracked)
+!config/
+!config/*.sample
+
+# SayTask (sample template only, not actual data)
+!saytask/
+!saytask/streaks.yaml.sample
+
+# Skills (skill-creator only)
+!skills/
+!skills/skill-creator/
+!skills/skill-creator/SKILL.md
+
+# Local/runtime-only directories (keep out of git status)
+codex/
+logs/
+memory/
+output/
+demo_output/
+test_output/
+OpenDolphin_WebClient/

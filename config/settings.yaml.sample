@@ -23,6 +23,11 @@ shell: bash
 screenshot:
   path: ./screenshots
 
+# ntfyトピック（任意: スマホから命令を送る）
+# ntfy topic (optional: send commands from your phone)
+# Example: ntfy_topic: "your-private-topic"
+ntfy_topic: ""
+
 # codex設定（agent: codex の場合に使用）
 # codex configuration (used when agent: codex)
 codex:
@@ -56,8 +61,11 @@ codex:
   
   # 思考深度設定 (high | medium | low)
   # Reasoning effort setting
-  shogun_reasoning: low      # 将軍用：戦略的判断は殿が行うため軽めに
-  worker_reasoning: medium   # 家老・足軽用：実務に適した深度
+  # Claudeのモデルに合わせる場合:
+  # - Opus相当 = high
+  # - Sonnet相当 = medium
+  shogun_reasoning: high     # 将軍/Opus相当
+  worker_reasoning: medium   # Sonnet相当
   
   # 追加オプション
   # Additional options

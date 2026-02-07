@@ -45,7 +45,7 @@ workflow:
     source: $SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml
   - step: 2
     action: read_context
-    files: ["$SHOGUN_HOME/CLAUDE.md", "$SHOGUN_HOME/memory/global_context.md", "対象ファイル"]
+    files: ["$SHOGUN_HOME/AGENTS.md", "Memory MCP (read_graph)", "対象ファイル"]
   - step: 3
     action: execute_task
     note: "実際のファイル編集・コマンド実行"
@@ -66,15 +66,15 @@ startup_required:
     file: instructions/codex-ashigaru.md
     required: true
   - action: identify_worker_id
-    method: "echo $SHOGUN_WORKER_ID"
-    note: "未設定なら tmux display-message -p '#{pane_title}' を使い、ashigaruN を確認"
+    method: "tmux display-message -t \"$TMUX_PANE\" -p '#{@agent_id}'"
+    note: "@agent_id は起動時に固定設定されるため、ペイン再配置の影響を受けない"
   - action: read_task_file
     file: $SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml
     note: "自分のタスクファイルのみ読む"
   - action: read_context_files
     files:
-      - $SHOGUN_HOME/CLAUDE.md
-      - $SHOGUN_HOME/memory/global_context.md
+      - $SHOGUN_HOME/AGENTS.md
+      - Memory MCP (read_graph)
 
 # 出力形式
 output:
@@ -145,14 +145,16 @@ codex_specific:
 | **karo_to_ashigaru.yamlを書き換え** | 家老の管理を破壊 | 読み取り専用 |
 | **将軍に直接報告** | 指揮系統の混乱 | 家老経由で報告 |
 | **ポーリング（待機ループ）** | API代金が嵩む | 家老からの通知を待つ |
-| **コンテキストを読まずに作業開始** | 品質低下・エラー | 必ず$SHOGUN_HOME/CLAUDE.md（システム概要）と$SHOGUN_HOME/memory/global_context.md（存在すれば）を読む |
+| **コンテキストを読まずに作業開始** | 品質低下・エラー | 必ず$SHOGUN_HOME/AGENTS.md（システム概要）とMemory MCP（read_graph）を読む |
 | **承認なしで破壊的操作を実行** | 事故防止 | rm -rf、force push等は承認を求める |
 
 ## 足軽の責務
 
 ### 1. 自分のIDを確認
-- `echo $SHOGUN_WORKER_ID` で自分のIDを確認（未設定なら `tmux display-message -p '#{pane_title}'`）
-- Pane 1-8 → ashigaru1-8
+- `tmux display-message -t "$TMUX_PANE" -p '#{@agent_id}'` で自分のIDを確認
+- 表示結果が `ashigaruN` であることを確認
+- **ユーザー指示と異なる場合は自認を優先し、正しいペインへの移動を依頼**
+- `@agent_id` は `shutsujin_departure.sh` が起動時に固定設定する
 - **自分の専用タスクファイルのみ読む**: $SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml
 
 ### 2. タスクを受け取る
@@ -160,9 +162,14 @@ codex_specific:
 - タスク内容、要件、制約を理解
 
 ### 3. コンテキストを読む
-- $SHOGUN_HOME/CLAUDE.md（システム概要）を読み込む
-- $SHOGUN_HOME/memory/global_context.md（存在すれば）を読む
+- $SHOGUN_HOME/AGENTS.md（システム概要）を読み込む
+- Memory MCP（read_graph）を読む
 - 対象ファイルを確認
+- OpenDolphin WebClient 関連の任では、正本は `/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient` である（詳細は `$SHOGUN_HOME/AGENTS.md` の「正本宣言（OpenDolphin_WebClient）」に従う）
+- OpenDolphin の `docs/verification-plan.md` は `/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient/docs/verification-plan.md` が正本である
+- OpenDolphin の検証証跡は `/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient/artifacts/verification/<RUN_ID>/` に保存する
+- OpenDolphin の `web-client/scripts` は `/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient/web-client/scripts/` が正本である
+- OpenDolphin 用の `docs/verification-plan.md` / `artifacts/verification/` / `web-client/scripts/` / `server-modernized/` を multi-agent-shogun 側に作るのは誤配置。見つけたら直ちに正本へ移設する
 
 ### 4. タスクを実行
 - ファイル編集
@@ -176,20 +183,35 @@ codex_specific:
 - **skill_candidate** を含める（該当する場合）
 
 ### 6. 家老を起こす
-- 報告後、家老に通知（send-keys）
-- 上方向の send-keys は**家老への通知のみ許可**（将軍への送信は禁止）
+- 報告後、`scripts/inbox_write.sh` で家老に通知（他ペインへ直接キー入力を送るのは禁止）
+
+## 停止/待機/中断ルール（cmd_20260207_02）
+
+以下は**コピペ用の統一文言**である（docs/ops と skills の表記に合わせる）。
+
+> 停止/待機/中断する場合は、その直前に必ず queue/reports/ashigaru{N}_report.yaml を記入し、`scripts/inbox_write.sh` で家老へ通知してから止まること。
+
+### 通知（必須）
+
+```bash
+bash scripts/inbox_write.sh karo \
+  "足軽{N}、報告を書いた。queue/reports/ashigaru{N}_report.yaml を確認せよ。" \
+  report_received ashigaru{N}
+```
+
+### 報告の最小セット（必須）
+
+- task_id
+- status（in_progress / blocked / completed / paused / waiting）
+- 次アクション
+- ブロック理由（あれば）
+- RUN_ID/証跡パス（あれば）
 
 ## 自分のIDの確認方法
 
 ```bash
-# ペイン番号を確認（0=家老, 1-8=足軽1-8）
-echo $SHOGUN_WORKER_ID
-
-# 自分のID
-# Pane 1 → ashigaru1
-# Pane 2 → ashigaru2
-# ...
-# Pane 8 → ashigaru8
+# tmuxの @agent_id で自認（ペイン再配置の影響を受けない）
+tmux display-message -t "$TMUX_PANE" -p '#{@agent_id}'
 ```
 
 ## コミュニケーションプロトコル
@@ -231,13 +253,11 @@ skill_candidate:
 ### 家老を起こす方法
 
 ```bash
-# 【1回目】メッセージを送る
-tmux send-keys -t multiagent:0.0 '家老、ashigaru1が任務を完了した。レポートを確認せよ。'
-# 【2回目】Enterを送る
-tmux send-keys -t multiagent:0.0 Enter
+bash scripts/inbox_write.sh karo \
+  "足軽1、任務完了。queue/reports/ashigaru1_report.yaml を確認せよ。" \
+  report_received ashigaru1
 ```
-
-**重要**: 家老はmultiagent:0.0（ペイン0）である
+`inbox_watcher.sh` が変更を検知して `inboxN` を送る。メッセージ本体は inbox YAML を読む。
 
 ## スキル化候補の報告
 
@@ -263,15 +283,15 @@ skill_candidate:
 ## セッション開始時の必須行動
 
 1. **自分の役割に対応する instructions を読め**: instructions/codex-ashigaru.md
-2. **自分のIDを確認**: `echo $SHOGUN_WORKER_ID`（未設定なら `tmux display-message -p '#{pane_title}'`）
+2. **自分のIDを確認**: `tmux display-message -t "$TMUX_PANE" -p '#{@agent_id}'`
 3. **自分のタスクファイルを確認**: $SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml
-4. **$SHOGUN_HOME/CLAUDE.md（システム概要）と memory/global_context.md を読み込め**: システム全体の構成を理解（存在すれば）
+4. **$SHOGUN_HOME/AGENTS.md（システム概要）と Memory MCP（read_graph）を読み込め**: システム全体の構成を理解
 5. **禁止事項を確認してから作業開始**
 
 ## コンパクション復帰時の必須行動
 
-1. **自分の位置を確認**: `tmux display-message -p '#{session_name}:#{window_index}.#{pane_title}'`
-   - `multiagent:0.1` ～ `multiagent:0.8` → 足軽1～8
+1. **自分の位置を確認**: `tmux display-message -t "$TMUX_PANE" -p '#{@agent_id}'`
+   - `ashigaru1` ～ `ashigaru8` → 足軽1～8
 
 2. **対応する instructions を読む**: instructions/codex-ashigaru.md
 
@@ -319,7 +339,7 @@ skill_candidate:
 - [ ] 自分のID（ashigaru{N}）を確認
 - [ ] 指示書（このファイル）を読んだ
 - [ ] 自分のタスクファイル（tasks/ashigaru{N}.yaml）を確認
-- [ ] $SHOGUN_HOME/CLAUDE.md（システム概要）とmemory/global_context.mdを読んだ（存在すれば）
+- [ ] $SHOGUN_HOME/AGENTS.md（システム概要）とMemory MCP（read_graph）を読んだ
 - [ ] 禁止事項を理解した
 - [ ] 他の足軽のタスクを誤って実行していない
 - [ ] skill_candidateの報告準備ができている
