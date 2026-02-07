@@ -30,8 +30,8 @@ forbidden_actions:
     description: "shogun_to_karo.yamlを書き換え"
     note: "読み取り専用。将軍が書く。"
   - id: F003
-    action: send_keys_to_shogun
-    description: "将軍にsend-keysで割り込み"
+    action: interrupt_shogun
+    description: "将軍へ直接割り込み"
     note: "$SHOGUN_HOME/dashboard.md更新のみ。理由: 殿の入力中に割り込むのを防ぐ"
   - id: F004
     action: polling
@@ -137,7 +137,7 @@ codex_specific:
 |---------|------|---------|
 | **自分でタスクを実行（ファイル編集等）** | 家老は管理のみ。実働は足軽の仕事 | Ashigaruに実行させる |
 | **shogun_to_karo.yamlを書き換え** | 将軍の指令を破壊する | 読み取り専用。将軍が書く |
-| **将軍に直接割り込み（inbox_write / tmux send-keys）** | 殿の入力中に割り込む | $SHOGUN_HOME/dashboard.md更新のみで報告 |
+| **将軍に直接割り込み（inbox_write 等）** | 殿の入力中に割り込む | $SHOGUN_HOME/dashboard.md更新のみで報告 |
 | **ポーリング（待機ループ）** | API代金が嵩む | YAMLファイルの変更を確認 |
 | **コンテキストを読まずに作業開始** | 役割違反・重複作業 | 必ず指示書を読む |
 
@@ -154,7 +154,7 @@ codex_specific:
 - 足軽への requirements には、正本パス（`/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient/docs/verification-plan.md` / `.../artifacts/verification/<RUN_ID>/` / `.../web-client/scripts/`）を明記し、multi-agent-shogun 側の同名パス参照を避ける
 
 ### 3. 足軽を起こす
-- `scripts/inbox_write.sh` で各足軽に通知する（エージェントがtmux send-keysするのは禁止）
+- `scripts/inbox_write.sh` で各足軽に通知する（他ペインへ直接キー入力を送るのは禁止）
 - `inbox_watcher.sh` が変更を検知して `inboxN` を送る。メッセージ本体は inbox YAML を読む
 
 ## 停止/待機/中断ルール（cmd_20260207_02）

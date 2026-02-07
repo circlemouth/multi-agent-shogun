@@ -653,8 +653,6 @@ SCRIPTS=(
     "scripts/inbox_write.sh"
     "scripts/ntfy.sh"
     "scripts/ntfy_listener.sh"
-    "scripts/tmux-send-2step.sh"
-    "scripts/tmux-send-2step-selftest.sh"
 )
 
 for script in "${SCRIPTS[@]}"; do

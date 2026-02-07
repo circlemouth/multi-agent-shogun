@@ -172,15 +172,11 @@ Layer 4: Session（揮発・コンテキスト内）
 - 指示・報告内容はYAMLファイルに書く
 - 通知は `scripts/inbox_write.sh` で inbox YAML（`queue/inbox/{agent}.yaml`）へ書き込む
 - 起動シグナル（`inboxN`）の送信は `scripts/inbox_watcher.sh`（インフラ）が行う
-- **エージェント自身が tmux send-keys を呼んではならない**（ハング・割り込み事故防止）
-
-補足（インフラ実装）:
-- `inbox_watcher.sh` は tmux send-keys を使用するが、メッセージ本体は送らず短いnudgeのみ送る
-- send-keys を使う場合は Enter は必ず分離し、タイムアウト付きで実行する（`inbox_watcher.sh` 実装に従う）
+- **エージェント自身が他ペインへ直接キー入力を送ってはならない**（ハング・割り込み事故防止）
 
 ### 報告の流れ（割り込み防止設計）
 - **足軽→家老**: 報告YAML記入 + `inbox_write.sh` で家老へ通知（**必須**）
-- **家老→将軍/殿**: dashboard.md 更新のみ（将軍への inbox_write / send-keys **禁止**）
+- **家老→将軍/殿**: dashboard.md 更新のみ（将軍への inbox_write **禁止**）
 - **上→下への指示**: YAML + `inbox_write.sh` で通知
 - 理由: 殿（人間）の入力中に割り込みが発生するのを防ぐ。足軽→家老は同じtmuxセッション内のため割り込みリスクなし
 

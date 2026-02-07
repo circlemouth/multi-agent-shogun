@@ -358,8 +358,8 @@ Step 9: Woken by either:
 
 | Event | Action |
 |-------|--------|
-| All subtasks done/failed | Send-keys to karo → triggers Step 9 (report reception) |
-| Timeout (5 min) | Send-keys warning → karo investigates |
+| All subtasks done/failed | `inbox_write` to karo → triggers Step 9 (report reception) |
+| Timeout (5 min) | `inbox_write` warning → karo investigates |
 | Karo processes reports during monitoring | Background monitor detects completion → sends duplicate wake-up (harmless) |
 
 ### Use TaskOutput to Check Background Bash
@@ -408,8 +408,8 @@ No dependency:  idle → assigned → done/failed
 With dependency: idle → blocked → assigned → done/failed
 ```
 
-| Status | Meaning | Send-keys? |
-|--------|---------|-----------|
+| Status | Meaning | Notify? |
+|--------|---------|---------|
 | idle | No task assigned | No |
 | blocked | Waiting for dependencies | **No** (can't work yet) |
 | assigned | Workable / in progress | Yes |
@@ -431,7 +431,7 @@ After steps 9-11 (report scan + dashboard update):
 3. If `blocked_by` contains completed task_id:
    - Remove completed task_id from list
    - If list empty → change `blocked` → `assigned`
-   - Send-keys to wake the ashigaru
+   - `inbox_write` to notify the ashigaru
 4. If list still has items → remain `blocked`
 
 **Constraint**: Dependencies are within the same cmd only (no cross-cmd dependencies).

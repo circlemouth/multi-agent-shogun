@@ -478,9 +478,9 @@ AIがあなたの好みを記憶します：
 
 - **Layer 2: nudge配信**
   - `inbox_watcher.sh` が `inotifywait`（カーネルイベント）でファイル変更を検知
-  - watcherが短い1行のnudge（起動シグナル）を `send-keys` で送信（timeout 5s）
+  - watcherが短い1行のnudge（起動シグナル）を送信（timeout 5s）
   - エージェント自身が自分のinboxファイルをReadして未読メッセージを処理
-  - **send-keysはメッセージ全文を送らない** — 起床通知のみ
+  - **メッセージ全文は送らない** — 起床通知のみ
 
 - **CPU使用率ゼロ**: watcherは`inotifywait`でファイル変更イベントまでブロック（待機中はCPU 0%）
 
@@ -887,8 +887,8 @@ task:
 3. **割り込み防止**: エージェント同士やあなたの入力への割り込みを防止
 4. **デバッグ容易**: 人間がinbox YAMLファイルを直接読んでメッセージフローを把握できる
 5. **競合回避**: `flock`（排他ロック）で同時書き込みを防止 — 複数エージェントが同時送信してもレースコンディションなし
-6. **配信保証**: ファイル書き込み成功 = メッセージ配信保証。到達確認不要、偽陰性なし、send-keys失敗による1.5時間ハングもなし
-7. **nudge-only配信**: `send-keys`は短い起床通知のみ送信（timeout 5s）、メッセージ全文は送らない。エージェントが自分でinboxファイルをRead。旧方式（メッセージ全文をsend-keys送信）で発生した文字化け・1.5時間ハング等の配信障害を根絶。
+6. **配信保証**: ファイル書き込み成功 = メッセージ配信保証。到達確認不要、偽陰性なし、起床通知の配信失敗による1.5時間ハングもなし
+7. **nudge-only配信**: 起床通知レイヤーは短いシグナルのみ送信（timeout 5s）、メッセージ全文は送らない。エージェントが自分でinboxファイルをRead。旧方式（メッセージ全文送信）で発生した文字化け・ハング等の配信障害を根絶。
 
 ### エージェント識別（@agent_id）
 
@@ -1137,9 +1137,8 @@ tmux attach-session -t shogun     # 接続してコマンドを出す
 ```bash
 ./shutsujin_departure.sh -s       # セッションのみ作成
 
-# 特定のエージェントでClaude Codeを手動起動
-tmux send-keys -t shogun:0 'claude --dangerously-skip-permissions' Enter
-tmux send-keys -t multiagent:0.0 'claude --dangerously-skip-permissions' Enter
+# 対象ペインにアタッチして、エージェントのコマンドを手動で起動
+# （config/settings.yaml の agent により claude / codex が変わる）
 ```
 
 **クラッシュ後の再起動：**

@@ -131,7 +131,7 @@ codex_specific:
 
 ### 2. 家老に指令を下す
 - **$SHOGUN_HOME/queue/shogun_to_karo.yaml** に命令を書く
-- `scripts/inbox_write.sh` で家老に通知する（エージェントがtmux send-keysするのは禁止）
+- `scripts/inbox_write.sh` で家老に通知する（他ペインへ直接キー入力を送るのは禁止）
 
 ### 3. 進捗を監視する
 - $SHOGUN_HOME/dashboard.md を読んで状況を把握する

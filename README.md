@@ -481,9 +481,9 @@ Agents communicate through file-based mailbox (inbox_write.sh + inbox_watcher.sh
 
 - **Layer 2: Nudge Delivery**
   - `inbox_watcher.sh` detects file changes via `inotifywait` (kernel event, not polling)
-  - Watcher sends a short 1-line nudge via `send-keys` (timeout 5s) to wake the agent
+  - Watcher sends a short 1-line wake-up nudge (timeout 5s) to wake the agent
   - Agent reads its own inbox file and processes unread messages
-  - **No full message via send-keys** — only a wake-up signal
+  - **No full message transmission** — only a wake-up signal
 
 - **Zero CPU**: Watcher blocks on `inotifywait` until file modification event (CPU 0% while idle)
 
@@ -910,8 +910,8 @@ These principles are documented in detail: **[docs/philosophy.md](docs/philosoph
 3. **No interruptions**: Prevents agents from interrupting each other or your input
 4. **Easy debugging**: Humans can read inbox YAML files directly to understand message flow
 5. **No conflicts**: `flock` (exclusive lock) prevents concurrent writes — multiple agents can send simultaneously without race conditions
-6. **Guaranteed delivery**: File write succeeded = message will be delivered. No delivery verification needed, no false negatives, no 1.5h hangs from send-keys failures
-7. **Nudge-only delivery**: `send-keys` transmits only a short wake-up signal (timeout 5s), not full message content. Agents read from their inbox files themselves. Eliminates send-keys transmission failures (character corruption, 1.5h hangs) that plagued the old "send full message" approach.
+6. **Guaranteed delivery**: File write succeeded = message will be delivered. No delivery verification needed, no false negatives, no 1.5h hangs from keystroke delivery failures
+7. **Nudge-only delivery**: The wake-up layer transmits only a short signal (timeout 5s), not full message content. Agents read from their inbox files themselves. Eliminates transmission failures (character corruption, hangs) that plagued the old "send full message" approach.
 
 ### Agent Identification (@agent_id)
 
@@ -1161,9 +1161,8 @@ tmux attach-session -t shogun     # Connect and give commands
 ```bash
 ./shutsujin_departure.sh -s       # Create sessions only
 
-# Manually launch Claude Code on specific agents
-tmux send-keys -t shogun:0 'claude --dangerously-skip-permissions' Enter
-tmux send-keys -t multiagent:0.0 'claude --dangerously-skip-permissions' Enter
+# Manually launch the agent by attaching to the pane and running the command
+# (claude or codex, depending on config/settings.yaml -> agent)
 ```
 
 **Restart after crash:**

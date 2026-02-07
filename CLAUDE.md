@@ -101,18 +101,18 @@ bash scripts/inbox_write.sh ashigaru3 "タスクYAMLを読んで作業開始せ�
 ```
 
 Delivery is handled by `inbox_watcher.sh` (infrastructure layer).
-**Agents NEVER call tmux send-keys directly.**
+**Agents NEVER inject keystrokes directly.** (Infrastructure scripts handle wake-up nudges.)
 
 ## Delivery Mechanism
 
 Two layers:
 1. **Message persistence**: `inbox_write.sh` writes to `queue/inbox/{agent}.yaml` with flock. Guaranteed.
-2. **Wake-up signal**: `inbox_watcher.sh` detects file change via `inotifywait` → sends SHORT nudge via send-keys (timeout 5s)
+2. **Wake-up signal**: `inbox_watcher.sh` detects file change via `inotifywait` → sends a SHORT nudge with timeout (5s)
 
 The nudge is minimal: `inboxN` (e.g. `inbox3` = 3 unread). That's it.
-**Agent reads the inbox file itself.** Watcher never sends message content via send-keys.
+**Agent reads the inbox file itself.** Watcher never transmits full message content via keystrokes.
 
-Special cases (CLI commands sent directly via send-keys):
+Special cases (CLI commands delivered via keystrokes):
 - `type: clear_command` → sends `/clear` + Enter + content
 - `type: model_switch` → sends the /model command directly
 

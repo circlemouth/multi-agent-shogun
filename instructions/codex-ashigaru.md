@@ -183,7 +183,7 @@ codex_specific:
 - **skill_candidate** を含める（該当する場合）
 
 ### 6. 家老を起こす
-- 報告後、`scripts/inbox_write.sh` で家老に通知（エージェントがtmux send-keysするのは禁止）
+- 報告後、`scripts/inbox_write.sh` で家老に通知（他ペインへ直接キー入力を送るのは禁止）
 
 ## 停止/待機/中断ルール（cmd_20260207_02）
 
