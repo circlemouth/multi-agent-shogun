@@ -281,6 +281,7 @@ fi
 # queue ディレクトリが存在しない場合は作成（初回起動時に必要）
 [ -d ./queue/reports ] || mkdir -p ./queue/reports
 [ -d ./queue/tasks ] || mkdir -p ./queue/tasks
+[ -d ./queue/inbox ] || mkdir -p ./queue/inbox
 
 if [ "$CLEAN_MODE" = true ]; then
     log_info "📜 前回の軍議記録を破棄中..."
@@ -312,6 +313,11 @@ EOF
 
     # ntfy inbox リセット
     echo "inbox:" > ./queue/ntfy_inbox.yaml
+
+    # agent inbox リセット
+    for agent in shogun karo ashigaru{1..8}; do
+        echo "messages:" > "./queue/inbox/${agent}.yaml"
+    done
 
     log_success "✅ 陣払い完了"
 else
@@ -656,28 +662,62 @@ NINJA_EOF
         sleep 1
     done
 
-    # 将軍に指示書を読み込ませる
-    log_info "  └─ 将軍に指示書を伝達中..."
-    tmux send-keys -t shogun:main "instructions/shogun.md を読んで役割を理解せよ。"
-    sleep 0.5
-    tmux send-keys -t shogun:main Enter
+    # ═══════════════════════════════════════════════════════════════════
+    # STEP 6.6: inbox_watcher起動（全エージェント）
+    # ═══════════════════════════════════════════════════════════════════
+    log_info "📬 メールボックス監視を起動中..."
 
-    # 家老に指示書を読み込ませる
-    sleep 2
-    log_info "  └─ 家老に指示書を伝達中..."
-    tmux send-keys -t "multiagent:agents.${PANE_BASE}" "instructions/karo.md を読んで役割を理解せよ。"
-    sleep 0.5
-    tmux send-keys -t "multiagent:agents.${PANE_BASE}" Enter
+    # inbox ディレクトリ初期化
+    mkdir -p "$SCRIPT_DIR/queue/inbox"
+    mkdir -p "$SCRIPT_DIR/logs"
+    for agent in shogun karo ashigaru{1..8}; do
+        [ -f "$SCRIPT_DIR/queue/inbox/${agent}.yaml" ] || echo "messages:" > "$SCRIPT_DIR/queue/inbox/${agent}.yaml"
+    done
 
-    # 足軽に指示書を読み込ませる（1-8）
-    sleep 2
-    log_info "  └─ 足軽に指示書を伝達中..."
+    # 既存のwatcherをkill
+    pkill -f "inbox_watcher.sh" 2>/dev/null || true
+    sleep 1
+
+    # 将軍のwatcher
+    nohup bash "$SCRIPT_DIR/scripts/inbox_watcher.sh" shogun "shogun:main" \
+        &>> "$SCRIPT_DIR/logs/inbox_watcher_shogun.log" &
+    disown
+
+    # 家老のwatcher
+    nohup bash "$SCRIPT_DIR/scripts/inbox_watcher.sh" karo "multiagent:agents.${PANE_BASE}" \
+        &>> "$SCRIPT_DIR/logs/inbox_watcher_karo.log" &
+    disown
+
+    # 足軽のwatcher
     for i in {1..8}; do
         p=$((PANE_BASE + i))
-        tmux send-keys -t "multiagent:agents.${p}" "instructions/ashigaru.md を読んで役割を理解せよ。汝は足軽${i}号である。"
-        sleep 0.3
-        tmux send-keys -t "multiagent:agents.${p}" Enter
-        sleep 0.5
+        nohup bash "$SCRIPT_DIR/scripts/inbox_watcher.sh" "ashigaru${i}" "multiagent:agents.${p}" \
+            &>> "$SCRIPT_DIR/logs/inbox_watcher_ashigaru${i}.log" &
+        disown
+    done
+
+    log_success "  └─ 10エージェント分のinbox_watcher起動完了"
+
+    # ═══════════════════════════════════════════════════════════════════
+    # STEP 6.7 (旧6.5): 各エージェントに指示書を読み込ませる（inbox経由）
+    # ═══════════════════════════════════════════════════════════════════
+
+    # 将軍に指示書を読み込ませる（inbox経由）
+    log_info "  └─ 将軍に指示書を伝達中..."
+    bash "$SCRIPT_DIR/scripts/inbox_write.sh" shogun \
+        "instructions/shogun.md を読んで役割を理解せよ。" system_startup system
+
+    # 家老に指示書を読み込ませる
+    log_info "  └─ 家老に指示書を伝達中..."
+    bash "$SCRIPT_DIR/scripts/inbox_write.sh" karo \
+        "instructions/karo.md を読んで役割を理解せよ。" system_startup system
+
+    # 足軽に指示書を読み込ませる（1-8）
+    log_info "  └─ 足軽に指示書を伝達中..."
+    for i in {1..8}; do
+        bash "$SCRIPT_DIR/scripts/inbox_write.sh" "ashigaru${i}" \
+            "instructions/ashigaru.md を読んで役割を理解せよ。汝は足軽${i}号である。" \
+            system_startup system
     done
 
     log_success "✅ 全軍に指示書伝達完了"
@@ -685,7 +725,7 @@ NINJA_EOF
 fi
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# STEP 6.7: ntfy入力リスナー起動
+# STEP 6.8: ntfy入力リスナー起動
 # ═══════════════════════════════════════════════════════════════════════════════
 NTFY_TOPIC=$(grep 'ntfy_topic:' ./config/settings.yaml 2>/dev/null | awk '{print $2}' | tr -d '"')
 if [ -n "$NTFY_TOPIC" ]; then

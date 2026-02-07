@@ -59,10 +59,10 @@ while true; do
     status: pending
 ENTRY
 
-        # Wake shogun via send-keys (2-call pattern per CLAUDE.md)
-        tmux send-keys -t shogun:main "ntfyから新しいメッセージ受信。queue/ntfy_inbox.yaml を確認し処理せよ。"
-        sleep 0.5
-        tmux send-keys -t shogun:main Enter
+        # Wake shogun via inbox
+        bash "$SCRIPT_DIR/scripts/inbox_write.sh" shogun \
+            "ntfyから新しいメッセージ受信。queue/ntfy_inbox.yaml を確認し処理せよ。" \
+            ntfy_received ntfy_listener
     done
 
     # Connection dropped — reconnect after brief pause

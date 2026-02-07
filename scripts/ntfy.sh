@@ -1,5 +1,5 @@
 #!/bin/bash
-# VoiceFlow通知 — ntfy.sh経由でスマホにプッシュ通知
+# SayTask通知 — ntfy.sh経由でスマホにプッシュ通知
 SETTINGS="/mnt/c/tools/multi-agent-shogun/config/settings.yaml"
 TOPIC=$(grep 'ntfy_topic:' "$SETTINGS" | awk '{print $2}' | tr -d '"')
 if [ -z "$TOPIC" ]; then

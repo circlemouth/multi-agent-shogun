@@ -6,6 +6,8 @@
 
 Run 8 Claude Code agents in parallel — orchestrated through a samurai-inspired hierarchy with zero coordination overhead.
 
+**Talk Coding, not Vibe Coding. Speak to your phone, AI executes.**
+
 [![GitHub Stars](https://img.shields.io/github/stars/yohey-w/multi-agent-shogun?style=social)](https://github.com/yohey-w/multi-agent-shogun)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Built_for-Claude_Code-blueviolet)](https://code.claude.com)
@@ -15,9 +17,9 @@ Run 8 Claude Code agents in parallel — orchestrated through a samurai-inspired
 
 </div>
 
-<p align="center">
+<!-- <p align="center">
   <img src="assets/screenshots/tmux_multiagent_9panes.png" alt="multi-agent-shogun: 9 panes running in parallel" width="800">
-</p>
+</p> -->
 
 <p align="center"><i>One Karo (manager) coordinating 8 Ashigaru (workers) — real session, no mock data.</i></p>
 
@@ -412,9 +414,9 @@ The Karo breaks the task into subtasks:
 
 All 5 Ashigaru research simultaneously. You can watch them work in real time:
 
-<p align="center">
+<!-- <p align="center">
   <img src="assets/screenshots/tmux_multiagent_working.png" alt="Ashigaru agents working in parallel" width="700">
-</p>
+</p> -->
 
 Results appear in `dashboard.md` as they complete.
 
@@ -460,7 +462,12 @@ Session 2: AI loads memory on startup
 
 ### 📡 4. Event-Driven (Zero Polling)
 
-Agents communicate through YAML files and wake each other with tmux send-keys. **No polling loops wasting API calls.**
+Agents communicate through file-based mailbox (inbox_write.sh + inbox_watcher.sh). **No polling loops wasting API calls.**
+
+- **Write**: `inbox_write.sh` writes messages to `queue/inbox/{agent}.yaml` with flock (exclusive lock)
+- **Watch**: `inbox_watcher.sh` detects changes via `inotifywait` (kernel event, not polling)
+- **Deliver**: Watcher sends messages to tmux panes when files change
+- **Zero CPU**: Watcher blocks on `inotifywait` until file modification event
 
 ### 📸 5. Screenshot Integration
 
@@ -542,7 +549,7 @@ Two-way communication between your phone and the Shogun — no SSH, no Tailscale
 | Direction | How it works |
 |-----------|-------------|
 | **Phone → Shogun** | Send a message from the ntfy app → `ntfy_listener.sh` receives it via streaming → Shogun processes automatically |
-| **Shogun → Phone** | Task completion, failure, or action-needed events trigger push notifications via `scripts/ntfy.sh` |
+| **Karo → Phone (direct)** | When Karo updates `dashboard.md`, it sends push notifications directly via `scripts/ntfy.sh` — **Shogun is bypassed** (Shogun is for human interaction, not progress reporting) |
 
 ```
 📱 You (from bed)          🏯 Shogun
@@ -623,11 +630,29 @@ The listener automatically reconnects if the connection drops. `shutsujin_depart
 | Duplicate notifications | Normal on reconnect — Shogun deduplicates by message ID |
 | Changed topic name but no notifications | The listener must be restarted: `pkill -f ntfy_listener.sh && nohup bash scripts/ntfy_listener.sh &>/dev/null &` |
 
-#### VoiceFlow Notifications
+**Real-world notification screenshots:**
+
+<p align="center">
+  <img src="images/screenshots/ntfy_saytask_rename.jpg" alt="Bidirectional phone communication" width="300">
+  &nbsp;&nbsp;
+  <img src="images/screenshots/ntfy_cmd043_progress.jpg" alt="Progress notification" width="300">
+</p>
+<p align="center"><i>Left: Bidirectional phone ↔ Shogun communication · Right: Real-time progress report from Ashigaru</i></p>
+
+<p align="center">
+  <img src="images/screenshots/ntfy_bloom_oc_test.jpg" alt="Command completion notification" width="300">
+  &nbsp;&nbsp;
+  <img src="images/screenshots/ntfy_persona_eval_complete.jpg" alt="8-agent parallel completion" width="300">
+</p>
+<p align="center"><i>Left: Command completion notification · Right: All 8 Ashigaru completing in parallel</i></p>
+
+> *Note: Topic names shown in screenshots are examples. Use your own unique topic name.*
+
+#### SayTask Notifications
 
 Behavioral psychology-driven motivation through your notification feed:
 
-- **Streak tracking**: Consecutive completion days counted in `voiceflow/streaks.yaml` — maintaining streaks leverages loss aversion to sustain momentum
+- **Streak tracking**: Consecutive completion days counted in `saytask/streaks.yaml` — maintaining streaks leverages loss aversion to sustain momentum
 - **Eat the Frog** 🐸: The hardest task of the day is marked as the "Frog." Completing it triggers a special celebration notification
 - **Daily progress**: `12/12 tasks today` — visual completion feedback reinforces the Arbeitslust effect (joy of work-in-progress)
 
@@ -638,7 +663,7 @@ Each tmux pane shows the agent's current task directly on its border:
 ```
 ┌ ashigaru1 (Sonnet) VF requirements ─┬ ashigaru3 (Opus) API research ──────┐
 │                                      │                                     │
-│  Working on VoiceFlow requirements   │  Researching REST API patterns      │
+│  Working on SayTask requirements     │  Researching REST API patterns      │
 │                                      │                                     │
 ├ ashigaru2 (Sonnet) ─────────────────┼ ashigaru4 (Opus) DB schema design ──┤
 │                                      │                                     │
@@ -651,6 +676,132 @@ Each tmux pane shows the agent's current task directly on its border:
 - **Idle**: `ashigaru1 (Sonnet)` — model name only, no task
 - Updated automatically by the Karo when assigning or completing tasks
 - Glance at all 9 panes to instantly know who's doing what
+
+### 📝 9. Zenn Feedback Analyzer — Continuous Skill Improvement
+
+Automatically collect feedback from X (Twitter) on your Zenn articles and improve your writing skills through AI expert panel discussions.
+
+**Eternal positive feedback loop:**
+
+```
+Zenn article published → X post → Reader reactions
+     ↑                                    ↓
+     │                           X API feedback collection
+     │                                    ↓
+     │                           AI classification (article vs post)
+     │                                    ↓
+     │                           4-person Expert Panel discussion
+     │                                    ↓
+     │                           SKILL.md auto-improvement (Git managed)
+     │                                    ↓
+     └───── Next article written with improved skills ←┘
+```
+
+**Expert Panel:**
+- 📊 Social Marketing Pro: CTR, share motivation, title magnetism
+- ✍️ World's Best Tech Blogger: structure, technical depth vs readability balance
+- 🧠 Reader Psychology Expert: empathy triggers, cognitive biases, drop-off points
+- 🎭 Comedy Writer (Manzai style): punchline sharpness, title wordplay, tension/release rhythm
+
+**How it works:**
+1. X API fetches replies & quote tweets on your Zenn article posts
+2. AI classifies: article feedback vs post comment (only article feedback used for skill improvement)
+3. 4 experts analyze independently, then cross-discuss
+4. Consensus (3/4 or 4/4) → auto-update `SKILL.md` + Git commit/push
+5. Next Zenn article uses improved skills automatically
+
+**Cost:** ~$100/month (X API Basic plan) for unlimited continuous improvement
+
+---
+
+## 🗣️ SayTask — Task Management for People Who Hate Task Management
+
+### What is SayTask?
+
+**Task management for people who hate task management. Just speak to your phone.**
+
+**Talk Coding, not Vibe Coding.** Speak your tasks, AI organizes them. No typing, no opening apps, no friction.
+
+- **Target audience**: People who installed Todoist but stopped opening it after 3 days
+- Your enemy isn't other apps — it's doing nothing. The competition is inaction, not another productivity tool
+- Zero UI. Zero typing. Zero app-opening. Just talk
+
+> *"Your enemy isn't other apps — it's doing nothing."*
+
+### How it Works
+
+1. Install the [ntfy app](https://ntfy.sh) (free, no account needed)
+2. Speak to your phone: *"dentist tomorrow"*, *"invoice due Friday"*
+3. AI auto-organizes → morning notification: *"here's your day"*
+
+```
+ 🗣️ "Buy milk, dentist tomorrow, invoice due Friday"
+       │
+       ▼
+ ┌──────────────────┐
+ │  ntfy → Shogun   │  AI auto-categorize, parse dates, set priorities
+ └────────┬─────────┘
+          │
+          ▼
+ ┌──────────────────┐
+ │   tasks.yaml     │  Structured storage (local, never leaves your machine)
+ └────────┬─────────┘
+          │
+          ▼
+ 📱 Morning notification:
+    "Today: 🐸 Invoice due · 🦷 Dentist 3pm · 🛒 Buy milk"
+```
+
+### Before / After
+
+| Before (v1) | After (v2) |
+|:-----------:|:----------:|
+| ![Task list v1](images/screenshots/ntfy_tasklist_v1_before.jpg) | ![Task list v2](images/screenshots/ntfy_tasklist_v2_aligned.jpg) |
+| Raw task dump | Clean, organized daily summary |
+
+> *Note: Topic names shown in screenshots are examples. Use your own unique topic name.*
+
+### Use Cases
+
+- 🛏️ **In bed**: *"Gotta submit the report tomorrow"* — captured before you forget, no fumbling for a notebook
+- 🚗 **While driving**: *"Don't forget the estimate for client A"* — hands-free, eyes on the road
+- 💻 **Mid-work**: *"Oh, need to buy milk"* — dump it instantly and stay in flow
+- 🌅 **Wake up**: Today's tasks already waiting in your notifications — no app to open, no inbox to check
+- 🐸 **Eat the Frog**: AI picks your hardest task each morning — ignore it or conquer it first
+
+### FAQ
+
+**Q: How is this different from other task apps?**
+A: You never open an app. Just speak. Zero friction. Most task apps fail because people stop opening them. SayTask removes that step entirely.
+
+**Q: Can I use SayTask without the full Shogun system?**
+A: SayTask is a feature of Shogun. Shogun also works as a standalone multi-agent development platform — you get both capabilities in one system.
+
+**Q: What's the Frog 🐸?**
+A: Every morning, AI picks your hardest task — the one you'd rather avoid. Tackle it first (the "Eat the Frog" method) or ignore it. Your call.
+
+**Q: Is it free?**
+A: Everything is free and open-source. ntfy is free too. No account, no server, no subscription.
+
+**Q: Where is my data stored?**
+A: Local YAML files on your machine. Nothing is sent to the cloud. Your tasks never leave your device.
+
+**Q: What if I say something vague like "that thing for work"?**
+A: AI does its best to categorize and schedule it. You can always refine later — but the point is capturing the thought before it disappears.
+
+### SayTask Standalone vs Shogun Integration
+
+| Capability | SayTask | Full Shogun Integration |
+|---|:-:|:-:|
+| Voice input → task creation | ✅ | ✅ |
+| Morning notification digest | ✅ | ✅ |
+| Eat the Frog 🐸 selection | ✅ | ✅ |
+| Streak tracking | ✅ | ✅ |
+| AI-executed tasks (cmd pipeline) | — | ✅ |
+| 8-agent parallel execution | — | ✅ |
+| cmd + SayTask streak unification | — | ✅ |
+
+SayTask gives you voice-driven task management out of the box. When a task needs code, research, or multi-step work, the full Shogun pipeline (Karo → 8 Ashigaru) can execute it for you — bridging personal productivity and AI-powered development.
 
 ---
 
@@ -734,14 +885,14 @@ These principles are documented in detail: **[docs/philosophy.md](docs/philosoph
 5. **Fault isolation**: One Ashigaru failing doesn't affect the others
 6. **Unified reporting**: Only the Shogun communicates with you, keeping information organized
 
-### Why YAML + send-keys?
+### Why Mailbox System?
 
 1. **State persistence**: YAML files provide structured communication that survives agent restarts
-2. **No polling needed**: Event-driven design reduces API costs
+2. **No polling needed**: `inotifywait` is event-driven (kernel-level), reducing API costs to zero during idle
 3. **No interruptions**: Prevents agents from interrupting each other or your input
-4. **Easy debugging**: Humans can read YAML files directly to understand system state
-5. **No conflicts**: Each Ashigaru has dedicated files
-6. **2-second send intervals**: Adding `sleep 2` between consecutive send-keys prevents input buffer overflow (improved delivery rate from 14% to 87.5%)
+4. **Easy debugging**: Humans can read inbox YAML files directly to understand message flow
+5. **No conflicts**: `flock` (exclusive lock) prevents concurrent writes — multiple agents can send simultaneously without race conditions
+6. **Guaranteed delivery**: File write succeeded = message will be delivered. No delivery verification needed, no false negatives, no 1.5h hangs from send-keys failures
 
 ### Agent Identification (@agent_id)
 
@@ -1045,6 +1196,8 @@ multi-agent-shogun/
 │   └── ashigaru.md           # Ashigaru instructions
 │
 ├── scripts/                  # Utility scripts
+│   ├── inbox_write.sh        # Write messages to agent inbox
+│   ├── inbox_watcher.sh      # Watch inbox changes via inotifywait
 │   ├── ntfy.sh               # Send push notifications to phone
 │   └── ntfy_listener.sh      # Stream incoming messages from phone
 │
@@ -1058,10 +1211,14 @@ multi-agent-shogun/
 ├── queue/                    # Communication files
 │   ├── shogun_to_karo.yaml   # Shogun → Karo commands
 │   ├── ntfy_inbox.yaml       # Incoming messages from phone (ntfy)
+│   ├── inbox/                # Per-agent inbox files
+│   │   ├── shogun.yaml       # Messages to Shogun
+│   │   ├── karo.yaml         # Messages to Karo
+│   │   └── ashigaru{1-8}.yaml # Messages to each Ashigaru
 │   ├── tasks/                # Per-worker task files
 │   └── reports/              # Worker reports
 │
-├── voiceflow/                # Behavioral psychology-driven motivation
+├── saytask/                  # Behavioral psychology-driven motivation
 │   └── streaks.yaml          # Streak tracking and daily progress
 │
 ├── templates/                # Report and context templates
@@ -1226,7 +1383,7 @@ Even if you're not comfortable with keyboard shortcuts, you can switch, scroll, 
 <summary><b>What's New in v2.0.0</b></summary>
 
 - **ntfy bidirectional communication** — Send commands from your phone, receive push notifications for task completion
-- **VoiceFlow notifications** — Streak tracking, Eat the Frog 🐸, behavioral psychology-driven motivation
+- **SayTask notifications** — Streak tracking, Eat the Frog 🐸, behavioral psychology-driven motivation
 - **Pane border task display** — See each agent's current task at a glance on the tmux pane border
 - **60% instruction token reduction** — English-only instructions + YAML restructuring
 - **42% /clear recovery cost reduction** — Faster agent recovery after context reset

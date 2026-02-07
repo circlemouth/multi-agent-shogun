@@ -1,7 +1,7 @@
-# VoiceFlow ストリーク管理
+# SayTask ストリーク管理
 # 家老がcmd完了時に更新する
 # 使い方: このファイルを streaks.yaml にコピーして使用
-#   cp voiceflow/streaks.yaml.sample voiceflow/streaks.yaml
+#   cp saytask/streaks.yaml.sample saytask/streaks.yaml
 streak:
   current: 0
   last_date: ""

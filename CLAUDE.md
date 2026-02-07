@@ -5,7 +5,7 @@ updated: "2026-02-07"
 description: "Claude Code + tmux multi-agent parallel dev platform with sengoku military hierarchy"
 
 hierarchy: "Lord (human) → Shogun → Karo → Ashigaru 1-8"
-communication: "YAML files + tmux send-keys (event-driven, NO polling)"
+communication: "YAML files + inbox mailbox system (event-driven, NO polling)"
 
 tmux_sessions:
   shogun: { pane_0: shogun }
@@ -20,6 +20,12 @@ files:
   reports: "queue/reports/ashigaru{N}_report.yaml" # Ashigaru → Karo reports
   dashboard: dashboard.md              # Human-readable summary (secondary data)
   ntfy_inbox: queue/ntfy_inbox.yaml    # Incoming ntfy messages from Lord's phone
+
+cmd_format:
+  required_fields: [id, timestamp, purpose, acceptance_criteria, command, project, priority, status]
+  purpose: "One sentence — what 'done' looks like. Verifiable."
+  acceptance_criteria: "List of testable conditions. ALL must be true for cmd=done."
+  validation: "Karo checks acceptance_criteria at Step 11.7. Ashigaru checks parent_cmd purpose on task completion."
 
 task_status_transitions:
   - "idle → assigned (karo assigns)"
@@ -74,28 +80,43 @@ Always include: 1) Agent role (shogun/karo/ashigaru) 2) Forbidden actions list 3
 
 # Communication Protocol
 
-## send-keys (two-call pattern, mandatory)
+## Mailbox System (inbox_write.sh)
+
+Agent-to-agent communication uses file-based mailbox:
 
 ```bash
-tmux send-keys -t multiagent:0.0 'message'    # Call 1: message
-tmux send-keys -t multiagent:0.0 Enter         # Call 2: Enter (separate Bash call!)
+bash scripts/inbox_write.sh <target_agent> "<message>" <type> <from>
 ```
 
-## Delivery Verification
+Examples:
+```bash
+# Shogun → Karo
+bash scripts/inbox_write.sh karo "cmd_048を書いた。実行せよ。" cmd_new shogun
 
-Wait 5s → `tmux capture-pane -t <target> -p | tail -8`
-- **OK**: Spinner (⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏✻⠂✳), "thinking", or message text visible
-- **NG**: Only `❯` prompt, no spinner/message
-- `esc to interrupt` / `bypass permissions on` = always visible, NOT delivery proof
-- On failure: resend ONCE. Don't chase further (report YAML exists as safety net).
+# Ashigaru → Karo
+bash scripts/inbox_write.sh karo "足軽5号、任務完了。報告YAML確認されたし。" report_received ashigaru5
+
+# Karo → Ashigaru
+bash scripts/inbox_write.sh ashigaru3 "タスクYAMLを読んで作業開始せよ。" task_assigned karo
+```
+
+Delivery is handled by `inbox_watcher.sh` (infrastructure layer).
+**Agents NEVER call tmux send-keys directly.**
+
+## Delivery Guarantee
+
+- File write with flock = guaranteed persistence
+- `inbox_watcher.sh` detects changes via `inotifywait` (kernel event, not polling — F004 compliant)
+- **No delivery verification needed** — write succeeded = message will be delivered
+- **No capture-pane checking needed**
 
 ## Report Flow (interrupt prevention)
 
 | Direction | Method | Reason |
 |-----------|--------|--------|
-| Ashigaru → Karo | Report YAML + send-keys | Same tmux session, no interrupt risk |
-| Karo → Shogun/Lord | dashboard.md update only | **send-keys FORBIDDEN** — prevents interrupting Lord's input |
-| Top → Down | YAML + send-keys | Standard wake-up |
+| Ashigaru → Karo | Report YAML + inbox_write | File-based notification |
+| Karo → Shogun/Lord | dashboard.md update only | **inbox to shogun FORBIDDEN** — prevents interrupting Lord's input |
+| Top → Down | YAML + inbox_write | Standard wake-up |
 
 ## File Operation Rule
 

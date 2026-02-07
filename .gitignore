@@ -43,9 +43,9 @@
 !scripts/ntfy.sh
 !scripts/ntfy_listener.sh
 
-# VoiceFlow (sample template only, not actual data)
-!voiceflow/
-!voiceflow/streaks.yaml.sample
+# SayTask (sample template only, not actual data)
+!saytask/
+!saytask/streaks.yaml.sample
 
 # Skills (skill-creator only)
 !skills/
