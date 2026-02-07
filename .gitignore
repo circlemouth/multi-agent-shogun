@@ -48,3 +48,10 @@ archive/
 # Build artifacts
 web-client/
 artifacts/
+
+# Guard against accidentally copying OpenDolphin repos/work products into this repo
+OpenDolphin_WebClient/
+server-modernized/
+*.har
+*.log
+*.zip
