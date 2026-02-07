@@ -1,0 +1,353 @@
+[debug] [vite] connecting...
+[debug] [vite] connected.
+[info] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+[startGroupCollapsed] %c[MSW] Mocking enabled. color:orangered;font-weight:bold;
+[log] %cDocumentation: %chttps://mswjs.io/docs font-weight:bold font-weight:normal
+[log] Found an issue? https://github.com/mswjs/msw/issues
+[log] Worker script URL: http://localhost:5173/mockServiceWorker.js
+[log] Worker scope: http://localhost:5173/
+[log] Client ID: %s (%s) ef08ce22-1693-476a-b48f-1d74522cc215 top-level
+[endGroup] console.groupEnd
+[info] [msw] development mock worker started
+[info] [audit] event {runId: 20260203T193638Z, traceId: eee806a8-0d0c-466f-9611-91818e838f05, source: auth, note: login attempt, payload: Object}
+[info] [login][/api/user] request start {endpoint: /api/user/1.3.6.1.4.1.9414.10.1:dolphindev, legacy: false, timeoutMs: 10000, protocol: http:}
+[info] [login][/api/user] request complete {endpoint: /api/user/1.3.6.1.4.1.9414.10.1:dolphindev, legacy: false, status: 200, ok: true}
+[info] [audit] event {runId: 20260203T193638Z, traceId: eee806a8-0d0c-466f-9611-91818e838f05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] event {runId: 20260203T193638Z, traceId: eee806a8-0d0c-466f-9611-91818e838f05, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20260203T193638Z, traceId: eee806a8-0d0c-466f-9611-91818e838f05, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20260203T193638Z, traceId: eee806a8-0d0c-466f-9611-91818e838f05, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [audit] UI state {runId: 20260203T193638Z, traceId: eee806a8-0d0c-466f-9611-91818e838f05, cacheHit: false, missingMaster: true, dataSourceTransition: server}
+[info] [audit] event {runId: 20260203T193638Z, traceId: eee806a8-0d0c-466f-9611-91818e838f05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [audit] UI state {runId: 20260203T193638Z, traceId: eee806a8-0d0c-466f-9611-91818e838f05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] event {runId: 20260203T193638Z, traceId: eee806a8-0d0c-466f-9611-91818e838f05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: eee806a8-0d0c-466f-9611-91818e838f05, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] event {runId: 20251212T143720Z, traceId: eee806a8-0d0c-466f-9611-91818e838f05, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[startGroupCollapsed] [MSW] 04:36:38 GET /orca/deptinfo (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: GET, headers: Object, body: }
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: 01 内科,02 外科,03 小児科}
+[endGroup] console.groupEnd
+[startGroupCollapsed] [MSW] 04:36:38 GET /orca/deptinfo (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: GET, headers: Object, body: }
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: 01 内科,02 外科,03 小児科}
+[endGroup] console.groupEnd
+[info] [audit] event {runId: 20251212T143720Z, traceId: eee806a8-0d0c-466f-9611-91818e838f05, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] event {runId: 20251212T143720Z, traceId: eee806a8-0d0c-466f-9611-91818e838f05, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: eee806a8-0d0c-466f-9611-91818e838f05, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[startGroupCollapsed] [MSW] 04:36:38 POST /orca/appointments/list/mock (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: POST, headers: Object, body: {"appointmentDate":"2026-02-03","medicalInformation":"","page":1,"size":50}}
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: {"appointmentDate":"2026-02-03","slots":[{"appoint…ed":3,"apiResult":"00","apiResultMessage":"処理終了"}}
+[endGroup] console.groupEnd
+[startGroupCollapsed] [MSW] 04:36:38 POST /orca/visits/list/mock (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: POST, headers: Object, body: {"visitDate":"2026-02-03","requestNumber":"01"}}
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: {"visitDate":"2026-02-03","visits":[{"voucherNumbe…ed":3,"apiResult":"00","apiResultMessage":"処理終了"}}
+[endGroup] console.groupEnd
+[startGroupCollapsed] [MSW] 04:36:38 POST /orca/appointments/list/mock (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: POST, headers: Object, body: {"appointmentDate":"2026-02-03","medicalInformation":"","page":1,"size":50}}
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: {"appointmentDate":"2026-02-03","slots":[{"appoint…ed":3,"apiResult":"00","apiResultMessage":"処理終了"}}
+[endGroup] console.groupEnd
+[startGroupCollapsed] [MSW] 04:36:38 POST /orca/visits/list/mock (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: POST, headers: Object, body: {"visitDate":"2026-02-03","requestNumber":"01"}}
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: {"visitDate":"2026-02-03","visits":[{"voucherNumbe…ed":3,"apiResult":"00","apiResultMessage":"処理終了"}}
+[endGroup] console.groupEnd
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] event {runId: 20251202T090000Z, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] event {runId: 20251202T090000Z, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[debug] [vite] connecting...
+[debug] [vite] connected.
+[info] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+[startGroupCollapsed] %c[MSW] Mocking enabled. color:orangered;font-weight:bold;
+[log] %cDocumentation: %chttps://mswjs.io/docs font-weight:bold font-weight:normal
+[log] Found an issue? https://github.com/mswjs/msw/issues
+[log] Worker script URL: http://localhost:5173/mockServiceWorker.js
+[log] Worker scope: http://localhost:5173/
+[log] Client ID: %s (%s) 71e19b9e-e190-4d1a-bf7c-9ba66a6e4230 top-level
+[endGroup] console.groupEnd
+[info] [msw] development mock worker started
+[info] [audit] event {runId: 20251202T090000Z, traceId: c7686e43-29cd-4db6-b289-92e131c2dd05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: c7686e43-29cd-4db6-b289-92e131c2dd05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: c7686e43-29cd-4db6-b289-92e131c2dd05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: c7686e43-29cd-4db6-b289-92e131c2dd05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: c7686e43-29cd-4db6-b289-92e131c2dd05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: c7686e43-29cd-4db6-b289-92e131c2dd05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] event {runId: 20251202T090000Z, traceId: c7686e43-29cd-4db6-b289-92e131c2dd05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: c7686e43-29cd-4db6-b289-92e131c2dd05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] event {runId: 20251202T090000Z, traceId: c7686e43-29cd-4db6-b289-92e131c2dd05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: c7686e43-29cd-4db6-b289-92e131c2dd05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] event {runId: 20251202T090000Z, traceId: c7686e43-29cd-4db6-b289-92e131c2dd05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: c7686e43-29cd-4db6-b289-92e131c2dd05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] event {runId: 20251202T090000Z, traceId: c7686e43-29cd-4db6-b289-92e131c2dd05, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] event {runId: 20251212T143720Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] event {runId: 20251212T143720Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: orca_summary, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] event {runId: 20251202T090000Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] event {runId: 20251212T143720Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] event {runId: 20251202T090000Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[startGroupCollapsed] [MSW] 04:36:40 POST /orca/appointments/list/mock (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: POST, headers: Object, body: {"appointmentDate":"2026-02-03","page":1,"size":50}}
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: {"appointmentDate":"2026-02-03","slots":[{"appoint…ed":3,"apiResult":"00","apiResultMessage":"処理終了"}}
+[endGroup] console.groupEnd
+[startGroupCollapsed] [MSW] 04:36:40 POST /orca21/medicalmodv2/outpatient (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: POST, headers: Object, body: }
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: {"runId":"20251212T143720Z","traceId":"trace-20251…採血結果を確認。","date":"2026-02-03"}]}}}],"status":200}}
+[endGroup] console.groupEnd
+[startGroupCollapsed] [MSW] 04:36:40 POST /orca/visits/list/mock (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: POST, headers: Object, body: {"visitDate":"2026-02-03","requestNumber":"01"}}
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: {"visitDate":"2026-02-03","visits":[{"voucherNumbe…ed":3,"apiResult":"00","apiResultMessage":"処理終了"}}
+[endGroup] console.groupEnd
+[startGroupCollapsed] [MSW] 04:36:40 POST /orca/appointments/list/mock (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: POST, headers: Object, body: {"appointmentDate":"2026-02-03","page":1,"size":50}}
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: {"appointmentDate":"2026-02-03","slots":[{"appoint…ed":3,"apiResult":"00","apiResultMessage":"処理終了"}}
+[endGroup] console.groupEnd
+[startGroupCollapsed] [MSW] 04:36:40 POST /orca21/medicalmodv2/outpatient (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: POST, headers: Object, body: }
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: {"runId":"20251212T143720Z","traceId":"trace-20251…採血結果を確認。","date":"2026-02-03"}]}}}],"status":200}}
+[endGroup] console.groupEnd
+[startGroupCollapsed] [MSW] 04:36:40 POST /orca/visits/list/mock (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: POST, headers: Object, body: {"visitDate":"2026-02-03","requestNumber":"01"}}
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: {"visitDate":"2026-02-03","visits":[{"voucherNumbe…ed":3,"apiResult":"00","apiResultMessage":"処理終了"}}
+[endGroup] console.groupEnd
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] event {runId: 20251202T090000Z, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] event {runId: 20251202T090000Z, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] event {runId: 20251202T090000Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[info] [audit] UI state {runId: 20251202T090000Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [audit] event {runId: 20251202T090000Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[info] [telemetry] Record outpatient funnel {stage: patient_fetch, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] event {runId: 20251212T143720Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[startGroupCollapsed] [MSW] 04:36:40 GET /orca/disease/import/000001 (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: GET, headers: Object, body: }
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: {"patientId":"000001","apiResult":"00","apiResultMessage":"mock disease import","diseases":[]}}
+[endGroup] console.groupEnd
+[startGroupCollapsed] [MSW] 04:36:40 POST /orca/patients/local-search (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: POST, headers: Object, body: {"keyword":"000001","runId":"20251212T143720Z"}}
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: {"patients":[{"patientId":"000001","name":"山田 花子",…"2026-02-03T19:36:40.493Z","recordsReturned":3}}}}
+[endGroup] console.groupEnd
+[startGroupCollapsed] [MSW] 04:36:40 POST /orca21/medicalmodv2/outpatient (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: POST, headers: Object, body: }
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: {"runId":"20251212T143720Z","traceId":"trace-20251…採血結果を確認。","date":"2026-02-03"}]}}}],"status":200}}
+[endGroup] console.groupEnd
+[info] [audit] event {runId: 20251202T090000Z, traceId: trace-20251212T143720Z, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[debug] [vite] connecting...
+[debug] [vite] connected.
+[info] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+[startGroupCollapsed] %c[MSW] Mocking enabled. color:orangered;font-weight:bold;
+[log] %cDocumentation: %chttps://mswjs.io/docs font-weight:bold font-weight:normal
+[log] Found an issue? https://github.com/mswjs/msw/issues
+[log] Worker script URL: http://localhost:5173/mockServiceWorker.js
+[log] Worker scope: http://localhost:5173/
+[log] Client ID: %s (%s) d40b9e1b-0f64-42c0-b2a3-652f23815c2c top-level
+[endGroup] console.groupEnd
+[info] [msw] development mock worker started
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: 4cd70603-fdb6-448b-9741-c644edd37804, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: 4cd70603-fdb6-448b-9741-c644edd37804, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: patient_fetch, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] event {runId: 20251212T143720Z, traceId: 4cd70603-fdb6-448b-9741-c644edd37804, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: 4cd70603-fdb6-448b-9741-c644edd37804, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[startGroupCollapsed] [MSW] 04:36:42 POST /orca/patients/local-search (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: POST, headers: Object, body: {"runId":"20260203T193642Z"}}
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: {"patients":[{"patientId":"000001","name":"山田 花子",…"2026-02-03T19:36:42.532Z","recordsReturned":3}}}}
+[endGroup] console.groupEnd
+[info] [audit] event {runId: 20251212T143720Z, traceId: 4cd70603-fdb6-448b-9741-c644edd37804, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[startGroupCollapsed] [MSW] 04:36:42 POST /api01rv2/patientlst7v2 (%c200 OK%c) color:#69AB32 color:inherit
+[log] Request {url: URL, method: POST, headers: Object, body: <data>
+  <patientlst7req type="record">
+    <Reque…tring">2</Memo_Class>
+  </patientlst7req>
+</data>}
+[log] Handler: HttpHandler
+[log] Response {status: 200, statusText: OK, headers: Object, body: <?xml version="1.0" encoding="UTF-8"?>
+<xmlio2>
+  …6-02-03</Base_Date>
+  </patientlst7res>
+</xmlio2>}
+[endGroup] console.groupEnd
+[debug] [vite] connecting...
+[debug] [vite] connected.
+[info] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+[startGroupCollapsed] %c[MSW] Mocking enabled. color:orangered;font-weight:bold;
+[log] %cDocumentation: %chttps://mswjs.io/docs font-weight:bold font-weight:normal
+[log] Found an issue? https://github.com/mswjs/msw/issues
+[log] Worker script URL: http://localhost:5173/mockServiceWorker.js
+[log] Worker scope: http://localhost:5173/
+[log] Client ID: %s (%s) 7ab0d870-e000-4680-9489-6231da77862e top-level
+[endGroup] console.groupEnd
+[info] [msw] development mock worker started
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: 44dcaf07-2f82-4120-b643-a0f43267e29f, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: 44dcaf07-2f82-4120-b643-a0f43267e29f, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[debug] [vite] connecting...
+[debug] [vite] connected.
+[info] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+[startGroupCollapsed] %c[MSW] Mocking enabled. color:orangered;font-weight:bold;
+[log] %cDocumentation: %chttps://mswjs.io/docs font-weight:bold font-weight:normal
+[log] Found an issue? https://github.com/mswjs/msw/issues
+[log] Worker script URL: http://localhost:5173/mockServiceWorker.js
+[log] Worker scope: http://localhost:5173/
+[log] Client ID: %s (%s) 72d58a69-1163-4b9e-9ed6-a35cf727aa10 top-level
+[endGroup] console.groupEnd
+[info] [msw] development mock worker started
+[info] [audit] event {runId: 20260203T193646Z, traceId: 7a8d1629-512f-478e-b472-4a7cbca8708a, cacheHit: false, missingMaster: false, fallbackUsed: false}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: 7a8d1629-512f-478e-b472-4a7cbca8708a, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: 7a8d1629-512f-478e-b472-4a7cbca8708a, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[debug] [vite] connecting...
+[debug] [vite] connected.
+[info] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+[startGroupCollapsed] %c[MSW] Mocking enabled. color:orangered;font-weight:bold;
+[log] %cDocumentation: %chttps://mswjs.io/docs font-weight:bold font-weight:normal
+[log] Found an issue? https://github.com/mswjs/msw/issues
+[log] Worker script URL: http://localhost:5173/mockServiceWorker.js
+[log] Worker scope: http://localhost:5173/
+[log] Client ID: %s (%s) dc67f20b-04d9-49a3-94ad-b9a54d13a6fd top-level
+[endGroup] console.groupEnd
+[info] [msw] development mock worker started
+[info] [audit] event {runId: 20260203T193648Z, traceId: 76f1037f-d0be-437c-9b0b-9d312491ed89, cacheHit: false, missingMaster: false, fallbackUsed: false}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: 76f1037f-d0be-437c-9b0b-9d312491ed89, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: 76f1037f-d0be-437c-9b0b-9d312491ed89, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[debug] [vite] connecting...
+[debug] [vite] connected.
+[info] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+[startGroupCollapsed] %c[MSW] Mocking enabled. color:orangered;font-weight:bold;
+[log] %cDocumentation: %chttps://mswjs.io/docs font-weight:bold font-weight:normal
+[log] Found an issue? https://github.com/mswjs/msw/issues
+[log] Worker script URL: http://localhost:5173/mockServiceWorker.js
+[log] Worker scope: http://localhost:5173/
+[log] Client ID: %s (%s) b0a7e200-f0bb-48dc-b880-c6d17aac40c0 top-level
+[endGroup] console.groupEnd
+[info] [msw] development mock worker started
+[info] [audit] event {runId: 20251212T143720Z, traceId: ff271e7a-f855-4087-9d3c-040fe7afcaac, source: authz, note: debug access denied, payload: Object}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: ff271e7a-f855-4087-9d3c-040fe7afcaac, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] event {runId: 20251212T143720Z, traceId: ff271e7a-f855-4087-9d3c-040fe7afcaac, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: ff271e7a-f855-4087-9d3c-040fe7afcaac, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[debug] [vite] connecting...
+[debug] [vite] connected.
+[info] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+[startGroupCollapsed] %c[MSW] Mocking enabled. color:orangered;font-weight:bold;
+[log] %cDocumentation: %chttps://mswjs.io/docs font-weight:bold font-weight:normal
+[log] Found an issue? https://github.com/mswjs/msw/issues
+[log] Worker script URL: http://localhost:5173/mockServiceWorker.js
+[log] Worker scope: http://localhost:5173/
+[log] Client ID: %s (%s) b3bddbd1-66ef-4309-847a-60965c8caa54 top-level
+[endGroup] console.groupEnd
+[info] [msw] development mock worker started
+[info] [audit] event {runId: 20251212T143720Z, traceId: 0da340ab-3d38-4b61-882f-b36907512b0c, source: authz, note: debug access denied, payload: Object}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: 0da340ab-3d38-4b61-882f-b36907512b0c, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] event {runId: 20251212T143720Z, traceId: 0da340ab-3d38-4b61-882f-b36907512b0c, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: 0da340ab-3d38-4b61-882f-b36907512b0c, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[debug] [vite] connecting...
+[debug] [vite] connected.
+[info] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+[startGroupCollapsed] %c[MSW] Mocking enabled. color:orangered;font-weight:bold;
+[log] %cDocumentation: %chttps://mswjs.io/docs font-weight:bold font-weight:normal
+[log] Found an issue? https://github.com/mswjs/msw/issues
+[log] Worker script URL: http://localhost:5173/mockServiceWorker.js
+[log] Worker scope: http://localhost:5173/
+[log] Client ID: %s (%s) e42fb4be-7986-4278-a502-829bc5d91012 top-level
+[endGroup] console.groupEnd
+[info] [msw] development mock worker started
+[info] [audit] event {runId: 20251212T143720Z, traceId: b578507d-ca81-416d-b1ec-19a9b1d408f1, source: authz, note: debug access denied, payload: Object}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: b578507d-ca81-416d-b1ec-19a9b1d408f1, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] event {runId: 20251212T143720Z, traceId: b578507d-ca81-416d-b1ec-19a9b1d408f1, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: b578507d-ca81-416d-b1ec-19a9b1d408f1, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[debug] [vite] connecting...
+[debug] [vite] connected.
+[info] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+[startGroupCollapsed] %c[MSW] Mocking enabled. color:orangered;font-weight:bold;
+[log] %cDocumentation: %chttps://mswjs.io/docs font-weight:bold font-weight:normal
+[log] Found an issue? https://github.com/mswjs/msw/issues
+[log] Worker script URL: http://localhost:5173/mockServiceWorker.js
+[log] Worker scope: http://localhost:5173/
+[log] Client ID: %s (%s) f3cdfa1a-af7e-4f19-bfa6-d4b7da6c3f0d top-level
+[endGroup] console.groupEnd
+[info] [msw] development mock worker started
+[info] [audit] event {runId: 20251212T143720Z, traceId: 471989e6-b74e-4aea-bbfa-05698f5dd672, source: authz, note: debug access denied, payload: Object}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: 471989e6-b74e-4aea-bbfa-05698f5dd672, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [audit] event {runId: 20251212T143720Z, traceId: 471989e6-b74e-4aea-bbfa-05698f5dd672, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}
+[info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: snapshot, cacheHit: false, missingMaster: true}
+[info] [audit] UI state {runId: 20251212T143720Z, traceId: 471989e6-b74e-4aea-bbfa-05698f5dd672, cacheHit: false, missingMaster: true, dataSourceTransition: snapshot}

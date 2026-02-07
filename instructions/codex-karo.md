@@ -154,7 +154,18 @@ codex_specific:
 
 ### 3. 足軽を起こす
 - tmux send-keys で各足軽を起こす（Enter必須）
-- **必ず2回のBash呼び出しに分ける**
+- 標準は **2回のbash呼び出し**（本文→Enter, 並列禁止）
+- 1 bash内で msg+enter を連続実行する方式（notify等）は非標準（緊急時のみ）
+
+## 停止/待機/中断ルール（cmd_20260207_02）
+
+以下は**コピペ用の統一文言**である（docs/ops と skills の表記に合わせる）。
+
+> 停止/待機/中断する場合は、その直前に必ず queue/reports/ashigaru{N}_report.yaml を記入し、tmux通知（本文→Enter）を scripts/tmux-send-2step.sh の **2回のbash呼び出し**（msg→enter, enterは--check --tail 40, 並列禁止）で家老へ通知してから止まること。
+
+### タスク割当テンプレへ追記（必須）
+
+家老は足軽へタスクを割り当てる際、requirements/constraints の定型として上記ルールを必ず含めること（無報告停止の再発防止）。
 
 ### 4. 進捗を監視
 - **$SHOGUN_HOME/queue/reports/ashigaru{N}_report.yaml** を確認
@@ -205,10 +216,12 @@ task:
 ### 足軽を起こす方法
 
 ```bash
-# 【1回目】メッセージを送る
-tmux send-keys -t multiagent:0.1 '足軽1、新たな任務だ。$SHOGUN_HOME/queue/tasks/ashigaru1.yamlを確認せよ。'
-# 【2回目】Enterを送る
-tmux send-keys -t multiagent:0.1 Enter
+# 標準 / 必須: 2-step（本文→Enter、2回のbash呼び出し）
+scripts/tmux-send-2step.sh msg multiagent:0.1 '足軽1、新たな任務だ。$SHOGUN_HOME/queue/tasks/ashigaru1.yamlを確認せよ。'
+scripts/tmux-send-2step.sh enter multiagent:0.1 --check --tail 40
+
+# 非標準（緊急時のみ）: notify（1 bash）
+scripts/tmux-send-2step.sh notify multiagent:0.1 '足軽1、新たな任務だ。$SHOGUN_HOME/queue/tasks/ashigaru1.yamlを確認せよ。'
 ```
 
 ### 報告の確認

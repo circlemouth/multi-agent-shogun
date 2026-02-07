@@ -1,0 +1,17 @@
+
+> web-client@0.0.0 dev
+> vite --host localhost --port 5173
+
+
+  VITE v6.4.1  ready in 127 ms
+
+  ➜  Local:   http://localhost:5173/
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+4:38:26 [vite] http proxy error: /api01rv2/patientlst7v2
+Error: Parse Error: Invalid header value char
+    at Socket.socketOnData (node:_http_client:558:22)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)

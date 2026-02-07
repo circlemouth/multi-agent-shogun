@@ -180,6 +180,33 @@ codex_specific:
 ### 6. 家老を起こす
 - 報告後、家老に通知（send-keys）
 
+## 停止/待機/中断ルール（cmd_20260207_02）
+
+以下は**コピペ用の統一文言**である（docs/ops と skills の表記に合わせる）。
+
+> 停止/待機/中断する場合は、その直前に必ず queue/reports/ashigaru{N}_report.yaml を記入し、tmux通知（本文→Enter）を scripts/tmux-send-2step.sh の **2回のbash呼び出し**（msg→enter, enterは--check --tail 40, 並列禁止）で家老へ通知してから止まること。
+
+### tmux通知（標準 / 必須: 2回のbash呼び出し）
+
+```bash
+# 1) 本文（bash call 1）
+scripts/tmux-send-2step.sh msg <target> '<message>'
+# 2) Enter + 単発確認（bash call 2）
+scripts/tmux-send-2step.sh enter <target> --check --tail 40
+```
+
+### 非標準（緊急時のみ）: notify（1 bash）
+
+`notify`（1 bash内で msg→enter 連続実行）は事故源になりうるため非標準。緊急時のみ使用可。
+
+### 報告の最小セット（必須）
+
+- task_id
+- status（in_progress / blocked / completed / paused / waiting）
+- 次アクション
+- ブロック理由（あれば）
+- RUN_ID/証跡パス（あれば）
+
 ## 自分のIDの確認方法
 
 ```bash

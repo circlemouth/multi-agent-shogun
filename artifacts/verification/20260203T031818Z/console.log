@@ -1,0 +1,60 @@
+[console:debug] [vite] connecting...
+[console:debug] [vite] connected.
+[console:info] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+[console:info] [audit] event {runId: RUN-TRIAL-VERIFY, traceId: 444f6ca0-b8dc-4d54-9b47-590d12df8db5, source: reception-exception-list, cacheHit: true, missingMaster: false}
+[console:info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: true, missingMaster: false}
+[console:info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: true, missingMaster: false}
+[console:info] [audit] UI state {runId: RUN-TRIAL-VERIFY, traceId: 444f6ca0-b8dc-4d54-9b47-590d12df8db5, cacheHit: true, missingMaster: false, dataSourceTransition: server}
+[console:info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: true, missingMaster: false}
+[console:info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: true, missingMaster: false}
+[console:info] [audit] UI state {runId: RUN-TRIAL-VERIFY, traceId: 444f6ca0-b8dc-4d54-9b47-590d12df8db5, cacheHit: true, missingMaster: false, dataSourceTransition: server}
+[console:info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: mock, cacheHit: false, missingMaster: false}
+[console:info] [audit] UI state {runId: 20260203T031945Z, traceId: 444f6ca0-b8dc-4d54-9b47-590d12df8db5, cacheHit: true, missingMaster: false, dataSourceTransition: mock}
+[console:info] [audit] event {runId: 20260203T031945Z, traceId: 444f6ca0-b8dc-4d54-9b47-590d12df8db5, cacheHit: false, missingMaster: false, dataSourceTransition: mock}
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[requestfailed] GET http://localhost:5173/api/chart-events net::ERR_ABORTED
+[requestfailed] POST http://localhost:5173/orca/claim/outpatient net::ERR_ABORTED
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[console:info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: true, missingMaster: false}
+[console:info] [audit] UI state {runId: RUN-TRIAL-VERIFY, traceId: 444f6ca0-b8dc-4d54-9b47-590d12df8db5, cacheHit: true, missingMaster: false, dataSourceTransition: server}
+[console:info] [audit] event {runId: RUN-TRIAL-VERIFY, traceId: 444f6ca0-b8dc-4d54-9b47-590d12df8db5, cacheHit: true, missingMaster: false, dataSourceTransition: server}
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[console:warning] [chart-events] stream error Error: chart-events stream failed: 401
+    at run (http://localhost:5173/src/libs/sse/chartEventStream.ts:160:17)
+[console:info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[console:info] [audit] UI state {runId: 20251202T090000Z, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[console:info] [audit] event {runId: 20251202T090000Z, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[console:info] [audit] event {runId: 20251202T090000Z, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[console:info] [telemetry] Record outpatient funnel {stage: resolve_master, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[console:info] [telemetry] Record outpatient funnel {stage: charts_orchestration, funnel: funnels/outpatient, dataSourceTransition: server, cacheHit: false, missingMaster: false}
+[console:info] [audit] UI state {runId: 20251202T090000Z, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: server}
+[requestfailed] GET http://localhost:5173/api/chart-events net::ERR_ABORTED
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[console:warning] [chart-events] stream error Error: chart-events stream failed: 401
+    at run (http://localhost:5173/src/libs/sse/chartEventStream.ts:160:17)
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[console:info] [telemetry] Record outpatient funnel {stage: reception_accept, funnel: funnels/outpatient, dataSourceTransition: mock, cacheHit: false, missingMaster: false}
+[console:info] [audit] UI state {runId: RUN-TRIAL-VERIFY, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: mock}
+[console:info] [audit] event {runId: RUN-TRIAL-VERIFY, traceId: trace-20251202T090000Z, cacheHit: false, missingMaster: false, dataSourceTransition: mock}
+[console:info] [acceptmodv2] {
+  "runId": "RUN-TRIAL-VERIFY",
+  "traceId": "trace-20251202T090000Z",
+  "requestNumber": "01",
+  "apiResultMessage": "Authentication required",
+  "patientId": "00001",
+  "durationMs": 48
+}
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[console:error] Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[banner] エラー
+
+受付処理でエラーが返却されました ｜ 送信先: Reception ｜ 次アクション: 内容確認 ｜ RUN_ID: RUN-TRIAL-VERIFY ｜ traceId: trace-20251202T090000Z
+[reception] patientId 00001 not found in rows
