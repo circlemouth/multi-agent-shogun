@@ -1,6 +1,0 @@
-[response 404] POST http://localhost:5173/orca/claim/outpatient
-[response 404] GET http://localhost:5173/api/orca/queue
-[response 404] GET http://localhost:5173/api/orca/queue
-[response 404] POST http://localhost:5173/orca/claim/outpatient
-[response 500] POST http://localhost:5173/api01rv2/patientlst7v2
-[response 404] GET http://localhost:5173/api/orca/queue
