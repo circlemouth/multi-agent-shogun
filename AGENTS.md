@@ -167,22 +167,21 @@ Layer 4: Session（揮発・コンテキスト内）
 
 ## 通信プロトコル
 
-### イベント駆動通信（YAML + send-keys）
+### イベント駆動通信（YAML + mailbox）
 - ポーリング禁止（API代金節約のため）
 - 指示・報告内容はYAMLファイルに書く
-- 通知は tmux send-keys で相手を起こす（必ず Enter を使用、C-m 禁止）
-- **send-keys は必ず2回のBash呼び出しに分けよ**（1回で書くとEnterが正しく解釈されない）：
-  ```bash
-  # 【1回目】メッセージを送る
-  tmux send-keys -t multiagent:0.0 'メッセージ内容'
-  # 【2回目】Enterを送る
-  tmux send-keys -t multiagent:0.0 Enter
-  ```
+- 通知は `scripts/inbox_write.sh` で inbox YAML（`queue/inbox/{agent}.yaml`）へ書き込む
+- 起動シグナル（`inboxN`）の送信は `scripts/inbox_watcher.sh`（インフラ）が行う
+- **エージェント自身が tmux send-keys を呼んではならない**（ハング・割り込み事故防止）
+
+補足（インフラ実装）:
+- `inbox_watcher.sh` は tmux send-keys を使用するが、メッセージ本体は送らず短いnudgeのみ送る
+- send-keys を使う場合は Enter は必ず分離し、タイムアウト付きで実行する（`inbox_watcher.sh` 実装に従う）
 
 ### 報告の流れ（割り込み防止設計）
-- **足軽→家老**: 報告YAML記入 + send-keys で家老を起こす（**必須**）
-- **家老→将軍/殿**: dashboard.md 更新のみ（send-keys **禁止**）
-- **上→下への指示**: YAML + send-keys で起こす
+- **足軽→家老**: 報告YAML記入 + `inbox_write.sh` で家老へ通知（**必須**）
+- **家老→将軍/殿**: dashboard.md 更新のみ（将軍への inbox_write / send-keys **禁止**）
+- **上→下への指示**: YAML + `inbox_write.sh` で通知
 - 理由: 殿（人間）の入力中に割り込みが発生するのを防ぐ。足軽→家老は同じtmuxセッション内のため割り込みリスクなし
 
 ### ファイル構成

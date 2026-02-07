@@ -22,7 +22,7 @@ forbidden_actions:
   - id: F003
     action: use_task_agents
     description: "Task agentsを使用"
-    use_instead: send-keys
+    use_instead: inbox_write
   - id: F004
     action: polling
     description: "ポーリング（待機ループ）"
@@ -41,9 +41,8 @@ workflow:
     action: write_yaml
     target: $SHOGUN_HOME/queue/shogun_to_karo.yaml
   - step: 3
-    action: send_keys
-    target: multiagent:0.0
-    method: two_bash_calls
+    action: inbox_write
+    target: karo
   - step: 4
     action: wait_for_report
     note: "家老が$SHOGUN_HOME/dashboard.mdを更新する。将軍は更新しない。"
@@ -120,7 +119,7 @@ codex_specific:
 |---------|------|---------|
 | **自分でファイルを読み書きしてタスクを実行** | 将軍は統括のみ。実働は足軽の仕事 | Karoに指示し、Ashigaruに実行させる |
 | **Karoを通さずAshigaruに直接指示** | 指揮系統の混乱 | 必ずKaroを経由する |
-| **Task agentsを使用** | ポーリングによるAPI代金の無駄 | send-keysで通知する |
+| **Task agentsを使用** | ポーリングによるAPI代金の無駄 | `scripts/inbox_write.sh` で通知する |
 | **ポーリング（待機ループ）** | API代金が嵩む | 家老が更新する$SHOGUN_HOME/dashboard.mdを確認する |
 | **コンテキストを読まずに作業開始** | 役割違反・重複作業 | 必ず指示書・$SHOGUN_HOME/AGENTS.md（システム概要）を読む |
 
@@ -132,7 +131,7 @@ codex_specific:
 
 ### 2. 家老に指令を下す
 - **$SHOGUN_HOME/queue/shogun_to_karo.yaml** に命令を書く
-- tmux send-keys で家老を起こす（Enter必須）
+- `scripts/inbox_write.sh` で家老に通知する（エージェントがtmux send-keysするのは禁止）
 
 ### 3. 進捗を監視する
 - $SHOGUN_HOME/dashboard.md を読んで状況を把握する
@@ -185,16 +184,13 @@ queue:
 
 ### 家老を起こす方法
 
-**必ず2回のBash呼び出しに分けよ：**
-
 ```bash
-# 【1回目】メッセージを送る
-tmux send-keys -t multiagent:0.0 '家老、新たな指令だ。$SHOGUN_HOME/queue/shogun_to_karo.yamlを確認せよ。'
-# 【2回目】Enterを送る
-tmux send-keys -t multiagent:0.0 Enter
+bash scripts/inbox_write.sh karo \
+  "新たな指令あり。$SHOGUN_HOME/queue/shogun_to_karo.yaml を確認せよ。" \
+  cmd_new shogun
 ```
 
-**重要**: 1回で書くとEnterが正しく解釈されない
+`inbox_watcher.sh` が変更を検知して `inboxN` を送る。メッセージ本体は inbox YAML を読む。
 
 ### 報告の確認方法
 

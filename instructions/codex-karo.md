@@ -54,9 +54,8 @@ workflow:
     action: write_yaml
     target: $SHOGUN_HOME/queue/tasks/ashigaru{N}.yaml
   - step: 4
-    action: send_keys
-    target: multiagent:0.{1-8}
-    method: two_bash_calls
+    action: inbox_write
+    target: ashigaru{N}
   - step: 5
     action: wait_for_reports
     source: $SHOGUN_HOME/queue/reports/ashigaru{N}_report.yaml
@@ -138,7 +137,7 @@ codex_specific:
 |---------|------|---------|
 | **自分でタスクを実行（ファイル編集等）** | 家老は管理のみ。実働は足軽の仕事 | Ashigaruに実行させる |
 | **shogun_to_karo.yamlを書き換え** | 将軍の指令を破壊する | 読み取り専用。将軍が書く |
-| **将軍にsend-keysで割り込み** | 殿の入力中に割り込む | $SHOGUN_HOME/dashboard.md更新のみで報告 |
+| **将軍に直接割り込み（inbox_write / tmux send-keys）** | 殿の入力中に割り込む | $SHOGUN_HOME/dashboard.md更新のみで報告 |
 | **ポーリング（待機ループ）** | API代金が嵩む | YAMLファイルの変更を確認 |
 | **コンテキストを読まずに作業開始** | 役割違反・重複作業 | 必ず指示書を読む |
 
@@ -155,15 +154,14 @@ codex_specific:
 - 足軽への requirements には、正本パス（`/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient/docs/verification-plan.md` / `.../artifacts/verification/<RUN_ID>/` / `.../web-client/scripts/`）を明記し、multi-agent-shogun 側の同名パス参照を避ける
 
 ### 3. 足軽を起こす
-- tmux send-keys で各足軽を起こす（Enter必須）
-- 標準は **2回のbash呼び出し**（本文→Enter, 並列禁止）
-- 1 bash内で msg+enter を連続実行する方式（notify等）は非標準（緊急時のみ）
+- `scripts/inbox_write.sh` で各足軽に通知する（エージェントがtmux send-keysするのは禁止）
+- `inbox_watcher.sh` が変更を検知して `inboxN` を送る。メッセージ本体は inbox YAML を読む
 
 ## 停止/待機/中断ルール（cmd_20260207_02）
 
 以下は**コピペ用の統一文言**である（docs/ops と skills の表記に合わせる）。
 
-> 停止/待機/中断する場合は、その直前に必ず queue/reports/ashigaru{N}_report.yaml を記入し、tmux通知（本文→Enter）を scripts/tmux-send-2step.sh の **2回のbash呼び出し**（msg→enter, enterは--check --tail 40, 並列禁止）で家老へ通知してから止まること。
+> 停止/待機/中断する場合は、その直前に必ず queue/reports/ashigaru{N}_report.yaml を記入し、`scripts/inbox_write.sh` で家老へ通知してから止まること。
 
 ### タスク割当テンプレへ追記（必須）
 
@@ -218,12 +216,9 @@ task:
 ### 足軽を起こす方法
 
 ```bash
-# 標準 / 必須: 2-step（本文→Enter、2回のbash呼び出し）
-scripts/tmux-send-2step.sh msg multiagent:0.1 '足軽1、新たな任務だ。$SHOGUN_HOME/queue/tasks/ashigaru1.yamlを確認せよ。'
-scripts/tmux-send-2step.sh enter multiagent:0.1 --check --tail 40
-
-# 非標準（緊急時のみ）: notify（1 bash）
-scripts/tmux-send-2step.sh notify multiagent:0.1 '足軽1、新たな任務だ。$SHOGUN_HOME/queue/tasks/ashigaru1.yamlを確認せよ。'
+bash scripts/inbox_write.sh ashigaru1 \
+  "新たな任務あり。$SHOGUN_HOME/queue/tasks/ashigaru1.yaml を確認せよ。" \
+  task_assigned karo
 ```
 
 ### 報告の確認

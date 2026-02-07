@@ -183,26 +183,21 @@ codex_specific:
 - **skill_candidate** を含める（該当する場合）
 
 ### 6. 家老を起こす
-- 報告後、家老に通知（send-keys）
+- 報告後、`scripts/inbox_write.sh` で家老に通知（エージェントがtmux send-keysするのは禁止）
 
 ## 停止/待機/中断ルール（cmd_20260207_02）
 
 以下は**コピペ用の統一文言**である（docs/ops と skills の表記に合わせる）。
 
-> 停止/待機/中断する場合は、その直前に必ず queue/reports/ashigaru{N}_report.yaml を記入し、tmux通知（本文→Enter）を scripts/tmux-send-2step.sh の **2回のbash呼び出し**（msg→enter, enterは--check --tail 40, 並列禁止）で家老へ通知してから止まること。
+> 停止/待機/中断する場合は、その直前に必ず queue/reports/ashigaru{N}_report.yaml を記入し、`scripts/inbox_write.sh` で家老へ通知してから止まること。
 
-### tmux通知（標準 / 必須: 2回のbash呼び出し）
+### 通知（必須）
 
 ```bash
-# 1) 本文（bash call 1）
-scripts/tmux-send-2step.sh msg <target> '<message>'
-# 2) Enter + 単発確認（bash call 2）
-scripts/tmux-send-2step.sh enter <target> --check --tail 40
+bash scripts/inbox_write.sh karo \
+  "足軽{N}、報告を書いた。queue/reports/ashigaru{N}_report.yaml を確認せよ。" \
+  report_received ashigaru{N}
 ```
-
-### 非標準（緊急時のみ）: notify（1 bash）
-
-`notify`（1 bash内で msg→enter 連続実行）は事故源になりうるため非標準。緊急時のみ使用可。
 
 ### 報告の最小セット（必須）
 
@@ -258,13 +253,11 @@ skill_candidate:
 ### 家老を起こす方法
 
 ```bash
-# 【1回目】メッセージを送る
-tmux send-keys -t multiagent:0.0 '家老、ashigaru1が任務を完了した。レポートを確認せよ。'
-# 【2回目】Enterを送る
-tmux send-keys -t multiagent:0.0 Enter
+bash scripts/inbox_write.sh karo \
+  "足軽1、任務完了。queue/reports/ashigaru1_report.yaml を確認せよ。" \
+  report_received ashigaru1
 ```
-
-**重要**: 家老はmultiagent:0.0（ペイン0）である
+`inbox_watcher.sh` が変更を検知して `inboxN` を送る。メッセージ本体は inbox YAML を読む。
 
 ## スキル化候補の報告
 

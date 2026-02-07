@@ -23,6 +23,11 @@ shell: bash
 screenshot:
   path: ./screenshots
 
+# ntfyトピック（任意: スマホから命令を送る）
+# ntfy topic (optional: send commands from your phone)
+# Example: ntfy_topic: "your-private-topic"
+ntfy_topic: ""
+
 # codex設定（agent: codex の場合に使用）
 # codex configuration (used when agent: codex)
 codex:
