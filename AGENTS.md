@@ -7,19 +7,13 @@
 multi-agent-shogunは、Codex + tmux を使ったマルチエージェント並列開発基盤である。
 戦国時代の軍制をモチーフとした階層構造で、複数のプロジェクトを並行管理できる。
 
-## 正本宣言（OpenDolphin_WebClient）
+## 正本宣言（プロジェクト一般）
 
-multi-agent-shogun は「母艦（キュー/ダッシュボード/通知）」であり、OpenDolphin WebClient の実作業・成果物の正本ではない。
+multi-agent-shogun は「母艦（キュー/ダッシュボード/通知）」であり、特定プロジェクトの実作業・成果物の正本ではない。
 
-- 正本ルート: `/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient`
-- 検証計画（正本）: `/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient/docs/verification-plan.md`
-- 検証証跡（保存先）: `/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient/artifacts/verification/<RUN_ID>/`
-- web-client scripts（正本）: `/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient/web-client/scripts/`
-
-誤配置（再発防止）:
-
-- OpenDolphin 用の `docs/verification-plan.md` / `artifacts/verification/` / `web-client/scripts/` / `server-modernized/` を multi-agent-shogun 側に作るのは誤り。見つけたら直ちに正本へ移設せよ。
-- multi-agent-shogun 配下に同名のコピーが存在しても、正本とはみなさない。参照は必ず上記の正本パスへ。
+- 正本は各プロジェクトのリポジトリ/作業ディレクトリに置く（`projects/<id>.yaml` の `path` 等で外部パスを指す）
+- このリポジトリ内に、別プロジェクトの `docs/` / `artifacts/` / `scripts/` / `server/` などを複製しない
+- もし誤ってコピーが作られても、**このリポジトリ側のコピーは正本とみなさない**
 
 ## セッション開始時の必須行動（全エージェント必須）
 

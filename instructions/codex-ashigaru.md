@@ -165,11 +165,8 @@ codex_specific:
 - $SHOGUN_HOME/AGENTS.md（システム概要）を読み込む
 - Memory MCP（read_graph）を読む
 - 対象ファイルを確認
-- OpenDolphin WebClient 関連の任では、正本は `/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient` である（詳細は `$SHOGUN_HOME/AGENTS.md` の「正本宣言（OpenDolphin_WebClient）」に従う）
-- OpenDolphin の `docs/verification-plan.md` は `/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient/docs/verification-plan.md` が正本である
-- OpenDolphin の検証証跡は `/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient/artifacts/verification/<RUN_ID>/` に保存する
-- OpenDolphin の `web-client/scripts` は `/Users/Hayato/Documents/GitHub/OpenDolphin_WebClient/web-client/scripts/` が正本である
-- OpenDolphin 用の `docs/verification-plan.md` / `artifacts/verification/` / `web-client/scripts/` / `server-modernized/` を multi-agent-shogun 側に作るのは誤配置。見つけたら直ちに正本へ移設する
+- 正本は対象プロジェクト側に置く（詳細は `$SHOGUN_HOME/AGENTS.md` の「正本宣言（プロジェクト一般）」に従う）
+- このリポジトリ側に、別プロジェクトの `docs/` / `artifacts/` / `scripts/` / `server/` 等を複製しない（誤配置の温床）
 
 ### 4. タスクを実行
 - ファイル編集
