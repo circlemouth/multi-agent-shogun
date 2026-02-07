@@ -906,23 +906,23 @@ NINJA_EOF
     pkill -f "inotifywait.*queue/inbox" 2>/dev/null || true
     sleep 1
 
-    # 将軍のwatcher
-    nohup bash "$SCRIPT_DIR/scripts/inbox_watcher.sh" shogun "shogun:main" \
-        &>> "$SCRIPT_DIR/logs/inbox_watcher_shogun.log" &
-    disown
+	# 将軍のwatcher
+	nohup bash "$SCRIPT_DIR/scripts/inbox_watcher.sh" shogun "shogun:main" \
+	    >> "$SCRIPT_DIR/logs/inbox_watcher_shogun.log" 2>&1 &
+	disown
 
-    # 家老のwatcher
-    nohup bash "$SCRIPT_DIR/scripts/inbox_watcher.sh" karo "multiagent:agents.${PANE_BASE}" \
-        &>> "$SCRIPT_DIR/logs/inbox_watcher_karo.log" &
-    disown
+	# 家老のwatcher
+	nohup bash "$SCRIPT_DIR/scripts/inbox_watcher.sh" karo "multiagent:agents.${PANE_BASE}" \
+	    >> "$SCRIPT_DIR/logs/inbox_watcher_karo.log" 2>&1 &
+	disown
 
-    # 足軽のwatcher
-    for i in {1..8}; do
-        p=$((PANE_BASE + i))
-        nohup bash "$SCRIPT_DIR/scripts/inbox_watcher.sh" "ashigaru${i}" "multiagent:agents.${p}" \
-            &>> "$SCRIPT_DIR/logs/inbox_watcher_ashigaru${i}.log" &
-        disown
-    done
+	# 足軽のwatcher
+	for i in {1..8}; do
+	    p=$((PANE_BASE + i))
+	    nohup bash "$SCRIPT_DIR/scripts/inbox_watcher.sh" "ashigaru${i}" "multiagent:agents.${p}" \
+	        >> "$SCRIPT_DIR/logs/inbox_watcher_ashigaru${i}.log" 2>&1 &
+	    disown
+	done
 
     log_success "  └─ 10エージェント分のinbox_watcher起動完了"
 
