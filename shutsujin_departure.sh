@@ -823,14 +823,19 @@ if [ "$SETUP_ONLY" = false ]; then
 	        # Give Codex a moment to finish TUI initialization before injecting prompts.
 	        sleep 2
 
-	        tmux send-keys -t shogun:main "出陣: まず tmux の @agent_id で自認し、${SHOGUN_INSTRUCTION} と AGENTS.md を読め。読み終えたら「準備完了」とだけ返し、以後は inbox/tasks を待て。" Enter
+	        tmux send-keys -t shogun:main "出陣: まず tmux の @agent_id で自認し、${SHOGUN_INSTRUCTION} と AGENTS.md を読め。読み終えたら「準備完了」とだけ返し、以後は inbox/tasks を待て。"
+	        tmux send-keys -t shogun:main Enter
+	        sleep 0.1
 
 	        p=$((PANE_BASE + 0))
-	        tmux send-keys -t "multiagent:agents.${p}" "出陣: まず tmux の @agent_id で自認し、${KARO_INSTRUCTION} と AGENTS.md を読め。読み終えたら「準備完了」とだけ返し、以後は inbox/tasks を待て。" Enter
+	        tmux send-keys -t "multiagent:agents.${p}" "出陣: まず tmux の @agent_id で自認し、${KARO_INSTRUCTION} と AGENTS.md を読め。読み終えたら「準備完了」とだけ返し、以後は inbox/tasks を待て。"
+	        tmux send-keys -t "multiagent:agents.${p}" Enter
+	        sleep 0.1
 
 	        for i in {1..8}; do
 	            p=$((PANE_BASE + i))
-	            tmux send-keys -t "multiagent:agents.${p}" "出陣: まず tmux の @agent_id で自認し、${ASHIGARU_INSTRUCTION} と AGENTS.md を読め。読み終えたら「準備完了」とだけ返し、以後は inbox/tasks を待て。" Enter
+	            tmux send-keys -t "multiagent:agents.${p}" "出陣: まず tmux の @agent_id で自認し、${ASHIGARU_INSTRUCTION} と AGENTS.md を読め。読み終えたら「準備完了」とだけ返し、以後は inbox/tasks を待て。"
+	            tmux send-keys -t "multiagent:agents.${p}" Enter
 	            sleep 0.2
 	        done
 	    fi
