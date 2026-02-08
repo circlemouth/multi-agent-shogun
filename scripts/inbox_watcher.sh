@@ -25,6 +25,27 @@ INBOX="$SCRIPT_DIR/queue/inbox/${AGENT_ID}.yaml"
 LOCKFILE="${INBOX}.lock"
 SEND_KEYS_TIMEOUT=5  # seconds — prevents hang (PID 274337 incident)
 
+HAS_PYTHON=0
+if command -v python3 &>/dev/null; then
+    HAS_PYTHON=1
+fi
+
+TIMEOUT_BIN=""
+if command -v timeout &>/dev/null; then
+    TIMEOUT_BIN="timeout"
+elif command -v gtimeout &>/dev/null; then
+    # macOS + coreutils
+    TIMEOUT_BIN="gtimeout"
+fi
+
+WATCH_BACKEND=""
+if command -v inotifywait &>/dev/null; then
+    WATCH_BACKEND="inotifywait"
+elif command -v fswatch &>/dev/null; then
+    # macOS (FSEvents) / cross-platform alternative
+    WATCH_BACKEND="fswatch"
+fi
+
 if [ -z "$AGENT_ID" ] || [ -z "$PANE_TARGET" ]; then
     echo "Usage: inbox_watcher.sh <agent_id> <pane_target>" >&2
     exit 1
@@ -38,15 +59,20 @@ fi
 
 echo "[$(date)] inbox_watcher started — agent: $AGENT_ID, pane: $PANE_TARGET" >&2
 
-# Ensure inotifywait is available
-if ! command -v inotifywait &>/dev/null; then
-    echo "[inbox_watcher] ERROR: inotifywait not found. Install: sudo apt install inotify-tools" >&2
+# Ensure watcher backend is available (event-driven; no polling)
+if [ -z "$WATCH_BACKEND" ]; then
+    echo "[inbox_watcher] ERROR: file watcher not found." >&2
+    echo "[inbox_watcher] Install one of:" >&2
+    echo "  - Linux: sudo apt install inotify-tools" >&2
+    echo "  - macOS: brew install fswatch" >&2
     exit 1
 fi
 
 # ─── Extract unread message info (lock-free read) ───
 # Returns JSON lines: {"count": N, "has_special": true/false, "specials": [...]}
 get_unread_info() {
+    # Prefer PyYAML when available (enables special types + read marking)
+    if [ "$HAS_PYTHON" -eq 1 ] && python3 -c "import yaml" &>/dev/null; then
     python3 -c "
 import yaml, sys, json
 try:
@@ -75,6 +101,28 @@ except Exception as e:
     print(json.dumps({'count': 0, 'specials': []}), file=sys.stderr)
     print(json.dumps({'count': 0, 'specials': []}))
 " 2>/dev/null
+        return 0
+    fi
+
+    # Fallback: count unread with grep only (no special handling).
+    # This keeps basic wake-up working on systems without PyYAML.
+    local count
+    count=$(grep -c '^[[:space:]]*read:[[:space:]]*false[[:space:]]*$' "$INBOX" 2>/dev/null || echo 0)
+    printf '{"count": %s, "specials": []}\n' "$count"
+}
+
+extract_count_from_json() {
+    # Best-effort JSON extraction without python/jq
+    echo "$1" | sed -n 's/.*"count"[[:space:]]*:[[:space:]]*\\([0-9][0-9]*\\).*/\\1/p' | head -n 1
+}
+
+tmux_send_keys() {
+    # Wrapper to avoid hard dependency on GNU timeout.
+    if [ -n "$TIMEOUT_BIN" ]; then
+        "$TIMEOUT_BIN" "$SEND_KEYS_TIMEOUT" tmux send-keys -t "$PANE_TARGET" "$@" 2>/dev/null
+    else
+        tmux send-keys -t "$PANE_TARGET" "$@" 2>/dev/null
+    fi
 }
 
 # ─── Send CLI command directly via send-keys ───
@@ -83,12 +131,12 @@ send_cli_command() {
     local cmd="$1"
     echo "[$(date)] Sending CLI command to $AGENT_ID: $cmd" >&2
 
-    if ! timeout "$SEND_KEYS_TIMEOUT" tmux send-keys -t "$PANE_TARGET" "$cmd" 2>/dev/null; then
+    if ! tmux_send_keys "$cmd"; then
         echo "[$(date)] WARNING: send-keys timed out for CLI command" >&2
         return 1
     fi
     sleep 0.3
-    if ! timeout "$SEND_KEYS_TIMEOUT" tmux send-keys -t "$PANE_TARGET" Enter 2>/dev/null; then
+    if ! tmux_send_keys Enter; then
         echo "[$(date)] WARNING: send-keys Enter timed out for CLI command" >&2
         return 1
     fi
@@ -108,12 +156,12 @@ send_wakeup() {
     local unread_count="$1"
     local nudge="inbox${unread_count}"
 
-    if ! timeout "$SEND_KEYS_TIMEOUT" tmux send-keys -t "$PANE_TARGET" "$nudge" 2>/dev/null; then
+    if ! tmux_send_keys "$nudge"; then
         echo "[$(date)] WARNING: send-keys nudge timed out ($SEND_KEYS_TIMEOUT s)" >&2
         return 1
     fi
     sleep 0.3
-    if ! timeout "$SEND_KEYS_TIMEOUT" tmux send-keys -t "$PANE_TARGET" Enter 2>/dev/null; then
+    if ! tmux_send_keys Enter; then
         echo "[$(date)] WARNING: send-keys Enter timed out ($SEND_KEYS_TIMEOUT s)" >&2
         return 1
     fi
@@ -129,6 +177,7 @@ process_unread() {
 
     # Handle special CLI commands first (/clear, /model)
     local specials
+    if [ "$HAS_PYTHON" -eq 1 ]; then
     specials=$(echo "$info" | python3 -c "
 import sys, json
 data = json.load(sys.stdin)
@@ -139,6 +188,9 @@ for s in data.get('specials', []):
     elif s['type'] == 'model_switch':
         print(s['content'])  # /model command
 " 2>/dev/null)
+    else
+        specials=""
+    fi
 
     if [ -n "$specials" ]; then
         echo "$specials" | while IFS= read -r cmd; do
@@ -148,7 +200,12 @@ for s in data.get('specials', []):
 
     # Send wake-up nudge for normal messages
     local normal_count
-    normal_count=$(echo "$info" | python3 -c "import sys,json; print(json.load(sys.stdin).get('count',0))" 2>/dev/null)
+    if [ "$HAS_PYTHON" -eq 1 ]; then
+        normal_count=$(echo "$info" | python3 -c "import sys,json; print(json.load(sys.stdin).get('count',0))" 2>/dev/null || echo 0)
+    else
+        normal_count=$(extract_count_from_json "$info")
+        [ -n "$normal_count" ] || normal_count=0
+    fi
 
     if [ "$normal_count" -gt 0 ] 2>/dev/null; then
         echo "[$(date)] $normal_count normal unread message(s) for $AGENT_ID" >&2
@@ -159,26 +216,31 @@ for s in data.get('specials', []):
 # ─── Startup: process any existing unread messages ───
 process_unread
 
-# ─── Main loop: event-driven via inotifywait ───
-# Timeout 60s: WSL2 /mnt/c/ can miss inotify events.
-# On timeout (exit 2), check for unread messages as a safety net.
-INOTIFY_TIMEOUT=60
-
 while true; do
-    # Block until file is modified OR timeout (safety net for WSL2)
-    # set +e: inotifywait returns 2 on timeout, which would kill script under set -e
-    set +e
-    inotifywait -q -t "$INOTIFY_TIMEOUT" -e modify -e close_write "$INBOX" 2>/dev/null
-    rc=$?
-    set -e
+    if [ "$WATCH_BACKEND" = "inotifywait" ]; then
+        # Event-driven via inotifywait.
+        # Timeout 60s: WSL2 /mnt/c/ can miss inotify events. On timeout (exit 2),
+        # check for unread as a safety net.
+        INOTIFY_TIMEOUT=60
 
-    # rc=0: event fired (instant delivery)
-    # rc=1: watch invalidated — Claude Code uses atomic write (tmp+rename),
-    #        which replaces the inode. inotifywait sees DELETE_SELF → rc=1.
-    #        File still exists with new inode. Treat as event, re-watch next loop.
-    # rc=2: timeout (60s safety net for WSL2 inotify gaps)
-    # All cases: check for unread, then loop back to inotifywait (re-watches new inode)
+        # Block until file is modified OR timeout (safety net for WSL2)
+        # set +e: inotifywait returns 2 on timeout, which would kill script under set -e
+        set +e
+        inotifywait -q -t "$INOTIFY_TIMEOUT" -e modify -e close_write "$INBOX" 2>/dev/null
+        rc=$?
+        set -e
+
+        # rc=0: event fired (instant delivery)
+        # rc=1: watch invalidated — atomic write (tmp+rename) replaces inode.
+        # rc=2: timeout (safety net)
+        # All cases: check for unread, then loop back (re-watches new inode)
+        sleep 0.3
+        process_unread
+        continue
+    fi
+
+    # macOS / fallback: fswatch (event-driven)
+    fswatch -1 "$INBOX" >/dev/null 2>&1 || true
     sleep 0.3
-
     process_unread
 done
