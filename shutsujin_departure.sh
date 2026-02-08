@@ -821,7 +821,7 @@ if [ "$SETUP_ONLY" = false ]; then
 	        [ -f "$ASHIGARU_INSTRUCTION" ] || ASHIGARU_INSTRUCTION="instructions/ashigaru.md"
 
 	        # Give Codex a moment to finish TUI initialization before injecting prompts.
-	        sleep 1
+	        sleep 2
 
 	        tmux send-keys -t shogun:main "Session start: identify self via tmux @agent_id, then read ${SHOGUN_INSTRUCTION} and AGENTS.md. Declare readiness and wait for inbox/tasks." Enter
 
@@ -952,11 +952,15 @@ NINJA_EOF
 
     log_success "  └─ 10エージェント分のinbox_watcher起動完了"
 
-    # STEP 6.7 は廃止 — CLAUDE.md Session Start (step 1: tmux agent_id) で各自が自律的に
-    # 自分のinstructions/*.mdを読み込む。検証済み (2026-02-08)。
-    log_info "📜 指示書読み込みは各エージェントが自律実行（CLAUDE.md Session Start）"
-    echo ""
-fi
+	    if [ "$AGENT_SETTING" = "codex" ]; then
+	        log_info "📜 指示書読み込みブートストラップは STEP 6.5 で投入済み（Codex互換）"
+	    else
+	        # STEP 6.7 は廃止 — CLAUDE.md Session Start (step 1: tmux agent_id) で各自が自律的に
+	        # 自分のinstructions/*.mdを読み込む。検証済み (2026-02-08)。
+	        log_info "📜 指示書読み込みは各エージェントが自律実行（CLAUDE.md Session Start）"
+	    fi
+	    echo ""
+	fi
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # STEP 6.8: ntfy入力リスナー起動
